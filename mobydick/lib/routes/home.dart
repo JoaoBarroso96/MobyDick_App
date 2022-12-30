@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mobydick/routes/home/trip_view.dart';
+import 'package:mobydick/services/trips_service.dart';
 import '../main.dart';
 import '../mobydick_app_theme.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
 import '../models/tabIcon_data.dart';
+import 'package:mobydick/globals.dart' as globals;
+
+import '../models/trip_model.dart';
+import '../models/trips_by_day_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,12 +19,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
+  TripService tripService = TripService();
+  late Future<List<TripsPerDay>> futureTrips;
+
   bool multiple = true;
+  var trips = [];
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
+    futureTrips = tripService.fetchTripsByDay();
     super.initState();
   }
 
@@ -41,125 +52,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
           : MobydickAppTheme.nearlyBlack,
-      body: FutureBuilder<bool>(
-        future: getData(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+      body: FutureBuilder<List<TripsPerDay>>(
+        future: futureTrips,
+        builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const SizedBox();
           } else {
-            return Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: FutureBuilder<bool>(
-                      future: getData(),
-                      builder:
-                          (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        } else {
-                          return ListView(
-                            padding: const EdgeInsets.only(
-                                top: 0, left: 12, right: 12),
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            // ignore: prefer_const_literals_to_create_immutables
-                            children: <Widget>[
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    const Text(
-                                      'Protein',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontFamily: MobydickAppTheme.fontName,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 21,
-                                        letterSpacing: -0.2,
-                                        color: MobydickAppTheme.darkText,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              "10:35 - (30/50)",
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    MobydickAppTheme.fontName,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15,
-                                                letterSpacing: 0.5,
-                                                color:
-                                                    MobydickAppTheme.lightText,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.01,
-                                            ),
-                                            Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.02,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.7,
-                                              decoration: BoxDecoration(
-                                                color: HexColor('#F56E98')
-                                                    .withOpacity(0.2),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(3.0)),
-                                              ),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.35,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.02,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          HexColor('#F56E98'),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  3.0)),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ]),
-                                    ),
-                                  ]),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
+            return ListView(
+              scrollDirection: Axis.vertical,
+              children: List.generate(
+                snapshot.data!.length,
+                (index) {
+                  return TripsView(tripsDay: snapshot.data?[index]);
+                },
               ),
             );
           }
@@ -167,4 +72,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
   }
+
+  /*Future<void> _getTrips() async {
+    TripService tripService = new TripService();
+
+    var tripsResponse = await tripService.getNextTrips();
+    if (tripsResponse == globals.INTERNET_CONNECTION_ERROR) {
+      //globals.showInternetConnectionFailedDialog(context);
+    } else {
+      setState(() {
+        trips = tripsResponse;
+        print(trips.length);
+      });
+    }
+  }*/
 }
