@@ -20,6 +20,10 @@ class MobydickAppTheme {
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'Roboto';
 
+  static const Color tripLowOccupancy = Color.fromARGB(255, 8, 145, 88);
+  static const Color tripMediumOccupancy = Color.fromARGB(255, 250, 200, 61);
+  static const Color tripHighOccupancy = Color.fromARGB(255, 226, 59, 59);
+
   static const TextTheme textTheme = TextTheme(
     headline4: display1,
     headline5: headline,
