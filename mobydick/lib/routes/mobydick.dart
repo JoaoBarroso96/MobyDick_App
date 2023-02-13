@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobydick/routes/home.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
 import '../mobydick_app_theme.dart';
@@ -43,6 +44,37 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
     return Container(
       color: MobydickAppTheme.background,
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Home",
+            style: TextStyle(
+              fontFamily: MobydickAppTheme.fontName,
+              fontWeight: FontWeight.w500,
+              fontSize: 25,
+              letterSpacing: 0.5,
+            ),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.search),
+              tooltip: 'Search Icon',
+              onPressed: () {},
+            ), //IconButton
+          ], //<Widget>[]
+          backgroundColor: MobydickAppTheme.nearlyBlue,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(15),
+                bottomLeft: Radius.circular(15)),
+          ),
+          elevation: 5.0,
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            tooltip: 'Menu Icon',
+            onPressed: () {},
+          ),
+          //systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
         backgroundColor: Colors.transparent,
         body: FutureBuilder<bool>(
           future: getData(),

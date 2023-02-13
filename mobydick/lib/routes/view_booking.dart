@@ -5,14 +5,16 @@ import '../mobydick_app_theme.dart';
 
 import '../models/trips_by_day_model.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class ViewBookingScreen extends StatefulWidget {
+  const ViewBookingScreen({Key? key, this.tripId}) : super(key: key);
 
+  final int? tripId;
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _ViewBookingState createState() => _ViewBookingState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _ViewBookingState extends State<ViewBookingScreen>
+    with TickerProviderStateMixin {
   AnimationController? animationController;
   TripService tripService = TripService();
   late Future<List<TripsPerDay>> futureTrips;
