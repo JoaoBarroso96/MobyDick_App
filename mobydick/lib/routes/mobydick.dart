@@ -4,6 +4,7 @@ import 'package:mobydick/routes/home.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
 import '../mobydick_app_theme.dart';
 import '../models/tabIcon_data.dart';
+import 'create_booking.dart';
 
 class MobydickHomeScreen extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = const HomeScreen();
+    tabBody = const /*HomeScreen()*/ CreateBookingScreen();
     super.initState();
   }
 

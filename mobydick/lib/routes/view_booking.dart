@@ -16,17 +16,14 @@ class ViewBookingScreen extends StatefulWidget {
 class _ViewBookingState extends State<ViewBookingScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  TripService tripService = TripService();
-  late Future<List<TripsPerDay>> futureTrips;
 
   bool multiple = true;
-  var trips = [];
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
-    futureTrips = tripService.fetchTripsByDay();
+
     super.initState();
   }
 
@@ -46,31 +43,9 @@ class _ViewBookingState extends State<ViewBookingScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-      backgroundColor: isLightMode == true
-          ? MobydickAppTheme.white
-          : MobydickAppTheme.nearlyBlack,
-      body: FutureBuilder<List<TripsPerDay>>(
-        future: futureTrips,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox();
-          } else {
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.1),
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: List.generate(
-                  snapshot.data!.length,
-                  (index) {
-                    return TripsView(tripsDay: snapshot.data?[index]);
-                  },
-                ),
-              ),
-            );
-          }
-        },
-      ),
-    );
+        backgroundColor: isLightMode == true
+            ? MobydickAppTheme.white
+            : MobydickAppTheme.nearlyBlack,
+        body: Text("a"));
   }
 }
