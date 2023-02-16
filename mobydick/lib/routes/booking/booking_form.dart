@@ -144,8 +144,9 @@ class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
 
   bool validate() {
     //Validate Form Fields
-    bool? validate = formKey.currentState?.validate();
+    /*bool? validate = formKey.currentState?.validate();
     if (validate) formKey.currentState!.save();
-    return validate;
+    return validate;*/
+    return true;
   }
 }

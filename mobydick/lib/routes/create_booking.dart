@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:mobydick/models/booking_create_model.dart';
 import '../mobydick_app_theme.dart';
+import 'booking/booking_form.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   const CreateBookingScreen({Key? key}) : super(key: key);
@@ -12,9 +14,7 @@ class CreateBookingScreen extends StatefulWidget {
 class _CreateBookingScreen extends State<CreateBookingScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-
-  bool multiple = true;
-  final _formKey = GlobalKey<FormState>();
+  List<ContactFormItemWidget> clientForms = List.empty(growable: true);
 
   @override
   void initState() {
@@ -35,50 +35,57 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
     super.dispose();
   }
 
-  final _emailController = useTextEditingController();
-
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-        backgroundColor: isLightMode == true
-            ? MobydickAppTheme.white
-            : MobydickAppTheme.nearlyBlack,
-        body: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
+      backgroundColor: isLightMode == true
+          ? MobydickAppTheme.white
+          : MobydickAppTheme.nearlyBlack,
+      body: clientForms.isNotEmpty
+          ? ListView.builder(
+              itemCount: clientForms.length,
+              itemBuilder: (_, index) {
+                return clientForms[index];
+              })
+          : Center(child: Text("Tap on + to Add Contact")),
+    );
+  }
 
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  bool emailValid = RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                      .hasMatch(value);
+  onSave() {
+    bool allValid = true;
 
-                  if (!emailValid) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ));
+    clientForms
+        .forEach((element) => allValid = (allValid && element.isValidated()));
+
+    if (allValid) {
+      List names = clientForms.map((e) => e.contactModel.name).toList();
+      debugPrint("$names");
+    } else {
+      debugPrint("Form is Not Valid");
+    }
+  }
+
+  //Delete specific form
+  onRemove(BookingCreatetModel contact) {
+    setState(() {
+      int index = clientForms
+          .indexWhere((element) => element.contactModel.id == contact.id);
+
+      clientForms.removeAt(index);
+    });
+  }
+
+  onAdd() {
+    setState(() {
+      BookingCreatetModel _contactModel =
+          BookingCreatetModel(id: clientForms.length);
+      clientForms.add(ContactFormItemWidget(
+        index: clientForms.length,
+        contactModel: _contactModel,
+        onRemove: () => onRemove(_contactModel),
+      ));
+    });
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobydick/routes/create_booking.dart';
 import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../mobydick_app_theme.dart';
 
+import '../models/booking_create_model.dart';
 import '../models/trips_by_day_model.dart';
 
 class ViewBookingScreen extends StatefulWidget {
@@ -16,8 +18,7 @@ class ViewBookingScreen extends StatefulWidget {
 class _ViewBookingState extends State<ViewBookingScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-
-  bool multiple = true;
+  List<CreateBookingScreen> clientForms = List.empty(growable: true);
 
   @override
   void initState() {
@@ -43,9 +44,16 @@ class _ViewBookingState extends State<ViewBookingScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-        backgroundColor: isLightMode == true
-            ? MobydickAppTheme.white
-            : MobydickAppTheme.nearlyBlack,
-        body: Text("a"));
+      backgroundColor: isLightMode == true
+          ? MobydickAppTheme.white
+          : MobydickAppTheme.nearlyBlack,
+      body: clientForms.isNotEmpty
+          ? ListView.builder(
+              itemCount: clientForms.length,
+              itemBuilder: (_, index) {
+                return clientForms[index];
+              })
+          : Center(child: Text("Tap on + to Add Contact")),
+    );
   }
 }
