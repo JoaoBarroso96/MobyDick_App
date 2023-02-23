@@ -63,7 +63,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
               onPressed: () {},
             ), //IconButton
           ], //<Widget>[]
-          backgroundColor: MobydickAppTheme.nearlyBlue,
+          backgroundColor: MobydickAppTheme.nearlyDarkBlue,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(15),

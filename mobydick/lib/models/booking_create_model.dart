@@ -1,8 +1,13 @@
-class BookingCreatetModel {
-  int id;
-  String? name;
-  String? number;
-  String? email;
+import 'package:mobydick/models/booking_client_model.dart';
 
-  BookingCreatetModel({required this.id, this.name, this.number, this.email});
+class BookingCreateModel {
+  int idTrip;
+  List<BookingClientModel> boookingClient;
+
+  BookingCreateModel({required this.idTrip, required this.boookingClient});
+
+  Map<String, dynamic> toJson() => {
+        'trip_ref': idTrip,
+        'clientsDetails': boookingClient,
+      };
 }

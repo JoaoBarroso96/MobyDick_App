@@ -1,17 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobydick/models/booking_create_model.dart';
+import '../../mobydick_app_theme.dart';
+import 'package:country_picker/country_picker.dart';
+
+import '../../models/booking_client_model.dart';
 
 class ContactFormItemWidget extends StatefulWidget {
   ContactFormItemWidget(
       {Key? key,
+      required this.contactTitle,
       required this.contactModel,
       required this.onRemove,
-      this.index})
+      required this.index})
       : super(key: key);
 
-  final index;
-  BookingCreatetModel contactModel;
+  int index;
+  BookingClientModel contactModel;
+  String contactTitle;
   final Function onRemove;
   final state = _ContactFormItemWidgetState();
 
@@ -23,12 +28,33 @@ class ContactFormItemWidget extends StatefulWidget {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _contactController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _hotelController = TextEditingController();
 
   bool isValidated() => state.validate();
 }
 
 class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
   final formKey = GlobalKey<FormState>();
+  bool isMainContact = false;
+  double distance = 9;
+
+  // Initial Selected Value
+  String dropdownvalue = 'Onde ouviu falar da Mobydick?';
+
+  // List of items in our dropdown menu
+  var items = [
+    'Onde ouviu falar da Mobydick?',
+    'Internet',
+    'Flyer',
+    'Recomendação de amigo',
+    'Outro',
+  ];
+
+  @override
+  void initState() {
+    isMainContact = widget.index != 0;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,38 +85,25 @@ class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Contact - ${widget.index}",
+                      widget.contactTitle,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.orange),
+                          color: MobydickAppTheme.nearlyBlue),
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              setState(() {
-                                //Clear All forms Data
-                                widget.contactModel.name = "";
-                                widget.contactModel.number = "";
-                                widget.contactModel.email = "";
-                                widget._nameController.clear();
-                                widget._contactController.clear();
-                                widget._emailController.clear();
-                              });
-                            },
-                            child: Text(
-                              "Clear",
-                              style: TextStyle(color: Colors.blue),
-                            )),
-                        TextButton(
+                    Visibility(
+                      visible: isMainContact,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            color: MobydickAppTheme.tripHighOccupancy,
+                            icon: const Icon(Icons.remove_circle_outline),
+                            tooltip: 'Remove',
                             onPressed: () => widget.onRemove(),
-                            child: Text(
-                              "Remove",
-                              style: TextStyle(color: Colors.blue),
-                            )),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -102,26 +115,32 @@ class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     border: OutlineInputBorder(),
-                    hintText: "Enter Name",
-                    labelText: "Name",
+                    hintText: "Coloque nome",
+                    labelText: "Nome",
+                  ),
+                ),
+                Visibility(
+                  visible: !isMainContact,
+                  child: SizedBox(
+                    height: distance,
+                  ),
+                ),
+                Visibility(
+                  visible: !isMainContact,
+                  child: TextFormField(
+                    controller: widget._contactController,
+                    onChanged: (value) => widget.contactModel.number = value,
+                    onSaved: (value) => widget.contactModel.name = value!,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      border: OutlineInputBorder(),
+                      hintText: "Coloque contato",
+                      labelText: "Contato",
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: 8,
-                ),
-                TextFormField(
-                  controller: widget._contactController,
-                  onChanged: (value) => widget.contactModel.number = value,
-                  onSaved: (value) => widget.contactModel.name = value!,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    border: OutlineInputBorder(),
-                    hintText: "Enter Number",
-                    labelText: "Number",
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
+                  height: distance,
                 ),
                 TextFormField(
                   controller: widget._emailController,
@@ -130,8 +149,121 @@ class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     border: OutlineInputBorder(),
-                    hintText: "Enter Email",
+                    hintText: "Colocar Email",
                     labelText: "Email",
+                  ),
+                ),
+                Visibility(
+                    visible: !isMainContact,
+                    child: SizedBox(
+                      height: distance,
+                    )),
+                Visibility(
+                  visible: !isMainContact,
+                  child: TextFormField(
+                    controller: widget._hotelController,
+                    onChanged: (value) => widget.contactModel.hotel = value,
+                    onSaved: (value) => widget.contactModel.hotel = value!,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      border: OutlineInputBorder(),
+                      hintText: "Hotel / Alojamento",
+                      labelText: "Hotel / Alojamento",
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: distance,
+                ),
+                InkWell(
+                  onTap: () {
+                    showCountryPicker(
+                      context: context,
+                      favorite: <String>['PT'],
+                      onSelect: (Country country) {
+                        setState(() {
+                          widget.contactModel.nationality =
+                              country.displayNameNoCountryCode;
+                        });
+                        //widget.contactModel.nationality = country.displayName;
+
+                        print('Select country: ${country.displayName}');
+                      },
+                      // Optional. Sets the theme for the country list picker.
+                      countryListTheme: CountryListThemeData(
+                        // Optional. Sets the border radius for the bottomsheet.
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40.0),
+                          topRight: Radius.circular(40.0),
+                        ),
+                        // Optional. Styles the search field.
+                        inputDecoration: InputDecoration(
+                          labelText: 'Search',
+                          hintText: 'Start typing to search',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: const Color(0xFF8C98A8).withOpacity(0.2),
+                            ),
+                          ),
+                        ),
+                        // Optional. Styles the text in the search field
+                        searchTextStyle: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                        ),
+                      ),
+                    );
+                  },
+                  child: InputDecorator(
+                      decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(15),
+                          border: OutlineInputBorder()),
+                      child: Text(
+                        widget.contactModel.nationality ?? "Nacionalidade",
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal, fontSize: 16),
+                      )),
+                ),
+                Visibility(
+                  visible: !isMainContact,
+                  child: SizedBox(
+                    height: distance,
+                  ),
+                ),
+                Visibility(
+                  visible: !isMainContact,
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.all(8),
+                        border: OutlineInputBorder(),
+                        labelText: "Opcional"),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        // Initial Value
+                        value: dropdownvalue,
+                        // Down Arrow Icon
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        // Array list of items
+                        items: items.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                        // After selecting the desired option,it will
+                        // change button value to selected value
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownvalue = newValue!;
+                            widget.contactModel.source = newValue;
+                          });
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ],
