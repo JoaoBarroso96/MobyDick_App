@@ -4,27 +4,32 @@ import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../mobydick_app_theme.dart';
 
-import '../models/trips_by_day_model.dart';
+import '../models/trip_details_model.dart';
 
 class ViewBookingScreen extends StatefulWidget {
-  const ViewBookingScreen({Key? key, this.tripId}) : super(key: key);
+  var tripId;
 
-  final int? tripId;
+  ViewBookingScreen({Key? key, this.tripId}) : super(key: key);
+
   @override
-  _ViewBookingState createState() => _ViewBookingState();
+  _ViewBookingScreen createState() => _ViewBookingScreen(tripId: tripId);
 }
 
-class _ViewBookingState extends State<ViewBookingScreen>
+class _ViewBookingScreen extends State<ViewBookingScreen>
     with TickerProviderStateMixin {
+  _ViewBookingScreen({
+    required this.tripId,
+    this.animationController,
+  });
+
+  int tripId;
   AnimationController? animationController;
-  List<CreateBookingScreen> clientForms = List.empty(growable: true);
+  TripService tripService = TripService();
+  late Future<TripDetails> futureTripDetails;
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
-
-    super.initState();
+    futureTripDetails = tripService.fetchTripBookings(tripId);
   }
 
   Future<bool> getData() async {
@@ -35,7 +40,7 @@ class _ViewBookingState extends State<ViewBookingScreen>
   @override
   void dispose() {
     animationController?.dispose();
-    super.dispose();
+    dispose();
   }
 
   @override
@@ -43,9 +48,22 @@ class _ViewBookingState extends State<ViewBookingScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-        backgroundColor: isLightMode == true
-            ? MobydickAppTheme.white
-            : MobydickAppTheme.nearlyBlack,
-        body: Text("TODO"));
+      backgroundColor: isLightMode == true
+          ? MobydickAppTheme.white
+          : MobydickAppTheme.nearlyBlack,
+      body: FutureBuilder<TripDetails>(
+        future: futureTripDetails,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const SizedBox();
+          } else {
+            return Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.1),
+                child: Text("ada ${snapshot.data?.boat}"));
+          }
+        },
+      ),
+    );
   }
 }

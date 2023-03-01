@@ -22,6 +22,13 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
     color: MobydickAppTheme.background,
   );
 
+  int _selectedIndex = 0;
+  List<Widget> _pages = [
+    HomeScreen(),
+    HomeScreen(),
+    HomeScreen(),
+  ];
+
   @override
   void initState() {
     tabIconsList.forEach((TabIconData tab) {
@@ -31,7 +38,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = const /*HomeScreen()*/ CreateBookingScreen();
+    tabBody = const HomeScreen() /*CreateBookingScreen()*/;
     super.initState();
   }
 
@@ -43,9 +50,16 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: MobydickAppTheme.background,
-      child: Scaffold(
+    return Scaffold(
+        //bottomNavigationBar: bottomBar(),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.orange,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.call), label: 'Call'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.message), label: 'Message'),
+          ],
+        ),
         appBar: AppBar(
           title: const Text(
             "Home",
@@ -78,23 +92,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
           //systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         backgroundColor: Colors.transparent,
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            } else {
-              return Stack(
-                children: <Widget>[
-                  tabBody,
-                  bottomBar(),
-                ],
-              );
-            }
-          },
-        ),
-      ),
-    );
+        body: _pages[_selectedIndex]);
   }
 
   Future<bool> getData() async {
@@ -105,9 +103,6 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
   Widget bottomBar() {
     return Column(
       children: <Widget>[
-        const Expanded(
-          child: SizedBox(),
-        ),
         BottomBarView(
           tabIconsList: tabIconsList,
           addClick: () {},

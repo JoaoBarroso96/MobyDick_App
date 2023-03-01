@@ -3,7 +3,7 @@ import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../mobydick_app_theme.dart';
 
-import '../models/trips_by_day_model.dart';
+import '../models/trip_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
   TripService tripService = TripService();
-  late Future<List<TripsPerDay>> futureTrips;
+  late Future<Map<String, List<Trip>>> futureTrips;
 
   bool multiple = true;
   var trips = [];
@@ -47,11 +47,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
           : MobydickAppTheme.nearlyBlack,
-      body: FutureBuilder<List<TripsPerDay>>(
+      body: FutureBuilder<Map<String, List<Trip>>>(
         future: futureTrips,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const SizedBox();
+            return Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.1),
+                child: const SizedBox(
+                  child: Text("dasda"),
+                ));
           } else {
             return Padding(
               padding: EdgeInsets.only(
@@ -61,7 +66,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: List.generate(
                   snapshot.data!.length,
                   (index) {
-                    return TripsView(tripsDay: snapshot.data?[index]);
+                    return TripsView(
+                        tripsDay: snapshot
+                                .data![snapshot.data!.keys.toList()[index]] ??
+                            []);
                   },
                 ),
               ),

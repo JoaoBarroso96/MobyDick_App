@@ -18,6 +18,18 @@ class BookingClientModel {
       this.source,
       required this.mainContact});
 
+  factory BookingClientModel.fromJson(Map<String, dynamic> json) {
+    return BookingClientModel(
+        id: int.parse(json['pk'].toString()),
+        name: json['name'].toString(),
+        email: json['email'].toString(),
+        number: json['contact'].toString(),
+        hotel: json['hotel'].toString(),
+        mainContact: json['main_contact'],
+        source: json['source'].toString(),
+        nationality: json['nationality'].toString());
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
