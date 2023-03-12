@@ -1,10 +1,9 @@
+
 import 'package:flutter/material.dart';
-import 'package:mobydick/routes/create_booking.dart';
-import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../mobydick_app_theme.dart';
-
 import '../models/trip_details_model.dart';
+import 'booking/client_details.dart';
 
 class ViewBookingScreen extends StatefulWidget {
   var tripId;
@@ -27,9 +26,17 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
   TripService tripService = TripService();
   late Future<TripDetails> futureTripDetails;
 
+
   @override
   void initState() {
-    futureTripDetails = tripService.fetchTripBookings(tripId);
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this);
+
+    setState(() {
+        futureTripDetails = tripService.fetchTripBookings(tripId);
+    });
+    
+    super.initState();
   }
 
   Future<bool> getData() async {
@@ -53,17 +60,30 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
           : MobydickAppTheme.nearlyBlack,
       body: FutureBuilder<TripDetails>(
         future: futureTripDetails,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<TripDetails> snapshot) {
           if (!snapshot.hasData) {
-            return const SizedBox();
+            return const SizedBox(child: Text("da"),);
           } else {
             return Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height * 0.1),
-                child: Text("ada ${snapshot.data?.boat}"));
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.15),
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: List.generate(
+                  snapshot.data!.tickets.length,
+                  (index) {
+                    return BookingWidget(
+                        tickets: snapshot
+                                .data!.tickets[snapshot.data!.tickets.keys.toList()[index]] ??
+                            []);
+                  },
+                ),
+              ),
+            );
           }
         },
       ),
     );
   }
 }
+

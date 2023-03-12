@@ -22,10 +22,10 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
     color: MobydickAppTheme.background,
   );
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   List<Widget> _pages = [
-    HomeScreen(),
-    HomeScreen(),
+    ViewBookingScreen(tripId:21),
+    CreateBookingScreen(),
     HomeScreen(),
   ];
 

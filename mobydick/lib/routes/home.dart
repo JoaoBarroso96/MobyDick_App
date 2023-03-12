@@ -24,7 +24,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
-    futureTrips = tripService.fetchTripsByDay();
+    //futureTrips = tripService.fetchTripsByDay();
+
+    setState(() {
+        futureTrips = tripService.fetchTripsByDay();
+      });
+
     super.initState();
   }
 
@@ -49,13 +54,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           : MobydickAppTheme.nearlyBlack,
       body: FutureBuilder<Map<String, List<Trip>>>(
         future: futureTrips,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Map<String, List<Trip>>> snapshot) {
           if (!snapshot.hasData) {
             return Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).size.height * 0.1),
                 child: const SizedBox(
-                  child: Text("dasda"),
+                  child: Text("Home"),
                 ));
           } else {
             return Padding(

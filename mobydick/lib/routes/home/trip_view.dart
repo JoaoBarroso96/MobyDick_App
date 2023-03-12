@@ -151,7 +151,7 @@ class TripDetail extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              /*ViewBookingScreen(tripId: trip.pk)*/ SecondPage()),
+                              ViewBookingScreen(tripId: trip.pk)),
                     );
                   },
                 ),

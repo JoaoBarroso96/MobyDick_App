@@ -9,7 +9,8 @@ import '../models/trip_details_model.dart';
 
 class TripService {
   Future<Map<String, List<Trip>>> fetchTripsByDay() async {
-    final response = await http.get(Uri.parse("${globals.baseUrl}/trips"));
+    try {
+    var response = await http.get(Uri.parse("${globals.baseUrl}/trips"));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -26,33 +27,20 @@ class TripService {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load album');
+      throw Exception('Error');
     }
+    }catch (exception) {
+      throw Exception('Error');
+    }
+    
   }
 
-  /*List<TripsPerDay> aggByDay(List<Trip> trips) {
-    String day = "";
-    List<Trip> tripsSameDay = [];
-    final DateFormat formatter = DateFormat('dd-MM-yyyy');
-    List<TripsPerDay> tripsPerDay = [];
-    for (var trip in trips) {
-      String currentDay = formatter.format(trip.departure);
 
-      if (day != currentDay && tripsSameDay.isNotEmpty) {
-        tripsPerDay.add(TripsPerDay(day, tripsSameDay));
-        tripsSameDay.clear();
-      }
-      day = currentDay;
-      tripsSameDay.add(trip);
-    }
-    tripsPerDay.add(TripsPerDay(day, tripsSameDay));
-    return tripsPerDay;
-  }*/
 
   Future<TripDetails> fetchTripBookings(int idTrip) async {
-    final response =
-        await http.get(Uri.parse("${globals.baseUrl}/trip/details/$idTrip"));
-    if (response.statusCode == 200) {
+    final response = await http.get(Uri.parse("${globals.baseUrl}/trip/details/$idTrip"));
+    try {
+      if (response.statusCode == 200) {
       TripDetails tripDetails =
           TripDetails.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       return tripDetails;
@@ -61,5 +49,9 @@ class TripService {
       // then throw an exception.
       throw Exception('Failed to load album');
     }
+    } catch (exception) {
+      throw Exception('Error');
+    }
+    
   }
 }
