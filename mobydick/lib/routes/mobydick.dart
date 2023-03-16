@@ -22,9 +22,9 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
     color: MobydickAppTheme.background,
   );
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
   List<Widget> _pages = [
-    ViewBookingScreen(tripId:21),
+    ViewBookingScreen(tripId: 21),
     CreateBookingScreen(),
     HomeScreen(),
   ];
@@ -51,15 +51,6 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //bottomNavigationBar: bottomBar(),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.orange,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.call), label: 'Call'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.message), label: 'Message'),
-          ],
-        ),
         appBar: AppBar(
           title: const Text(
             "Home",
@@ -89,7 +80,14 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
             tooltip: 'Menu Icon',
             onPressed: () {},
           ),
-          //systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.orange,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.call), label: 'Call'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.message), label: 'Message'),
+          ],
         ),
         backgroundColor: Colors.transparent,
         body: _pages[_selectedIndex]);
