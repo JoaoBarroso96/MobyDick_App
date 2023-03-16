@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../mobydick_app_theme.dart';
+import '../../models/ticket_model.dart';
 import '../../models/trip_details_model.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +13,10 @@ class TripDetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Intl.defaultLocale = 'pt';
+    List<int> countTicket = countPaymentsAndCheckin(tripDetails.tickets);
+    String capacity = "${countTicket[2]}/${tripDetails.capacity}";
+    String paymentStats = "${countTicket[1]}/${countTicket[2]}";
+    String checkinStats = "${countTicket[0]}/${countTicket[2]}";
     String day = capitalize(
         DateFormat('EEEE, d MMMM, yyyy').format(tripDetails.departure));
     return Column(
@@ -57,7 +62,7 @@ class TripDetailsWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                "15 / 20",
+                capacity,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: MobydickAppTheme.fontName,
@@ -102,7 +107,7 @@ class TripDetailsWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "15 / 20",
+                    paymentStats,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: MobydickAppTheme.fontName,
@@ -145,7 +150,7 @@ class TripDetailsWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "15 / 20",
+                    checkinStats,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: MobydickAppTheme.fontName,
@@ -178,3 +183,19 @@ class TripDetailsWidget extends StatelessWidget {
 }
 
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+List<int> countPaymentsAndCheckin(Map<int, List<Ticket>> tickets) {
+  List<int> count = [0, 0, 0];
+
+  for (List<Ticket> listT in tickets.values) {
+    count[2] = count[2] + listT.length;
+    for (Ticket t in listT) {
+      if (t.state == "Checkin") {
+        count[0]++;
+      }
+      if (t.paymentState != "none") {
+        count[1]++;
+      }
+    }
+  }
+  return count;
+}
