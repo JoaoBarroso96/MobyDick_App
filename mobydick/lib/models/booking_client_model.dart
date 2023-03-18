@@ -24,13 +24,21 @@ class BookingClientModel {
     return BookingClientModel(
         id: int.parse(json['pk']?.toString() ?? "0"),
         name: json['name'].toString(),
-        email: json['email'].toString(),
-        number: json['contact'].toString(),
-        hotel: json['hotel'].toString(),
+        email:
+            json['email'].toString() == "null" ? "" : json['email'].toString(),
+        number: json['contact'].toString() == "null"
+            ? ""
+            : json['contact'].toString(),
+        hotel:
+            json['hotel'].toString() == "null" ? "" : json['hotel'].toString(),
         mainContact: json['main_contact'],
-        source: json['source'].toString(),
+        source: json['source'].toString() == "null"
+            ? ""
+            : json['source'].toString(),
         bookingId: int.parse(json['booking_id'].toString()),
-        nationality: json['nationality'].toString());
+        nationality: json['nationality'].toString() == "null"
+            ? ""
+            : json['nationality'].toString());
   }
 
   Map<String, dynamic> toJson() => {

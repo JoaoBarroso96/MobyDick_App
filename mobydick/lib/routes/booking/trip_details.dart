@@ -166,6 +166,36 @@ class TripDetailsWidget extends StatelessWidget {
           ],
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Visibility(
+              visible: tripDetails.state != "Cancel",
+              child: ElevatedButton.icon(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        MobydickAppTheme.tripHighOccupancy)),
+                onPressed: () {},
+                icon: Icon(
+                  // <-- Icon
+                  Icons.cancel_outlined,
+                  size: 17.0,
+                ),
+                label: Text(
+                  'Cancelar',
+                  style: const TextStyle(
+                    fontFamily: MobydickAppTheme.fontName,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    letterSpacing: -0.2,
+                  ),
+                ), // <-- Text
+              ),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+          ],
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
         Text(
           "Reservas",
           textAlign: TextAlign.left,

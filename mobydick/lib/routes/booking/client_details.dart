@@ -1,5 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 
 import '../../mobydick_app_theme.dart';
 import '../../models/ticket_model.dart';
@@ -430,7 +431,19 @@ class TicketRowWidget extends StatelessWidget {
                       Visibility(
                         visible: ticket.state == "Pending",
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (await confirm(
+                              context,
+                              title: const Text('Confirmação'),
+                              content: Text(
+                                  'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}'),
+                              textOK: const Text('Sim'),
+                              textCancel: const Text('Não'),
+                            )) {
+                              return print('pressedOK');
+                            }
+                            return print('pressedCancel');
+                          },
                           icon: Icon(
                             // <-- Icon
                             Icons.check_circle_outline,
