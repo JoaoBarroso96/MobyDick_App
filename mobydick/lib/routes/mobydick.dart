@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/routes/home.dart';
 import 'package:mobydick/routes/view_booking.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
 import '../mobydick_app_theme.dart';
 import '../models/tabIcon_data.dart';
+import 'calendar.dart';
 import 'create_booking.dart';
 
 class MobydickHomeScreen extends StatefulWidget {
@@ -14,31 +16,52 @@ class MobydickHomeScreen extends StatefulWidget {
 
 class _MobydickHomeScreenState extends State<MobydickHomeScreen>
     with TickerProviderStateMixin {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
+
+  void _onItemTapped(int index) {
+    if (index != _currentIndex.value) {
+      _navigatorKey.currentState!.pushReplacementNamed('/${index + 1}');
+      _currentIndex.value = index;
+    }
+  }
+
   AnimationController? animationController;
 
-  List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-
-  Widget tabBody = Container(
-    color: MobydickAppTheme.background,
-  );
-
-  int _selectedIndex = 0;
-  List<Widget> _pages = [
-    ViewBookingScreen(tripId: 21),
-    CreateBookingScreen(),
+  List<Widget> pages = [
+    CalendarScreen(),
     HomeScreen(),
+    CalendarScreen(),
+    CalendarScreen()
   ];
+
+  Navigator navigator = Navigator(
+    onGenerateRoute: (settings) {
+      Widget page = CalendarScreen(); //HomeScreen();
+      if (settings.name == 'tripDetails') {
+        Map arguments = settings.arguments as Map;
+        page = ViewBookingScreen(tripId: arguments["id"]);
+      } else if (settings.name == 'createBooking') {
+        Map arguments = settings.arguments as Map;
+        page = CreateBookingScreen(
+          tripId: arguments["tripId"],
+          bookingId: arguments["bookingId"],
+        );
+      } else if (settings.name == /* 'createBooking'*/ 'page1') {
+        page = CreateBookingScreen();
+      } else if (settings.name == 'page0') {
+        page = HomeScreen();
+      }
+
+      return MaterialPageRoute(builder: (_) => page);
+    },
+  );
 
   @override
   void initState() {
-    tabIconsList.forEach((TabIconData tab) {
-      tab.isSelected = false;
-    });
-    tabIconsList[0].isSelected = true;
-
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = const HomeScreen() /*CreateBookingScreen()*/;
+
     super.initState();
   }
 
@@ -51,62 +74,55 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Home",
-            style: TextStyle(
-              fontFamily: MobydickAppTheme.fontName,
-              fontWeight: FontWeight.w500,
-              fontSize: 25,
-              letterSpacing: 0.5,
-            ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: 'Search Icon',
-              onPressed: () {},
-            ), //IconButton
-          ], //<Widget>[]
-          backgroundColor: MobydickAppTheme.nearlyDarkBlue,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(15),
-                bottomLeft: Radius.circular(15)),
-          ),
-          elevation: 5.0,
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            tooltip: 'Menu Icon',
-            onPressed: () {},
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.orange,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.call), label: 'Call'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.message), label: 'Message'),
-          ],
+        bottomNavigationBar: ValueListenableBuilder<int>(
+          valueListenable: _currentIndex,
+          builder: (context, value, child) {
+            return CustomBottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: _onItemTapped,
+            );
+          },
         ),
         backgroundColor: Colors.transparent,
-        body: _pages[_selectedIndex]);
+        body: Navigator(
+          key: _navigatorKey,
+          onGenerateRoute: (RouteSettings settings) {
+            WidgetBuilder builder;
+
+            switch (settings.name) {
+              case '/1':
+                builder = (BuildContext _) => HomeScreen();
+                break;
+              case '/2':
+                builder = (BuildContext _) => CalendarScreen();
+                break;
+              case '/3':
+                builder = (BuildContext _) => CalendarScreen();
+                break;
+              case 'createBooking':
+                Map arguments = settings.arguments as Map;
+                builder = (BuildContext _) => CreateBookingScreen(
+                      tripId: arguments["tripId"],
+                      bookingId: arguments["bookingId"],
+                    );
+                break;
+              case 'tripDetails':
+                Map arguments = settings.arguments as Map;
+                builder = (BuildContext _) =>
+                    ViewBookingScreen(tripId: arguments["id"]);
+                break;
+              default:
+                builder = (BuildContext _) => HomeScreen();
+              //throw Exception('Invalid route: ${settings.name}');
+            }
+
+            return MaterialPageRoute(builder: builder, settings: settings);
+          },
+        ));
   }
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
-  }
-
-  Widget bottomBar() {
-    return Column(
-      children: <Widget>[
-        BottomBarView(
-          tabIconsList: tabIconsList,
-          addClick: () {},
-          changeIndex: (int index) {},
-        ),
-      ],
-    );
   }
 }

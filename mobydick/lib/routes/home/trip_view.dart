@@ -146,14 +146,8 @@ class TripDetail extends StatelessWidget {
                   iconSize: 27,
                   color: MobydickAppTheme.nearlyBlue,
                   icon: const Icon(Icons.visibility),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ViewBookingScreen(tripId: trip.pk)),
-                    );
-                  },
+                  onPressed: () => Navigator.pushNamed(context, 'tripDetails',
+                      arguments: {"id": trip.pk}),
                 ),
               ],
             ),

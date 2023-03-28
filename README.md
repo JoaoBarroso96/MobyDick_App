@@ -8,3 +8,7 @@ Follow Flutter instalation guide [here](https://docs.flutter.dev/get-started/ins
 ## Run Localy
 - cd mobydick
 - flutter run
+
+
+## Packages
+https://pub.dev/packages/persistent_bottom_nav_bar

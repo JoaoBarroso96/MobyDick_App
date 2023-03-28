@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:mobydick/models/booking_create_model.dart';
 import 'package:mobydick/services/booking_service.dart';
+import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
 import '../models/booking_client_model.dart';
 import 'booking/booking_form.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class CreateBookingScreen extends StatefulWidget {
-  const CreateBookingScreen({Key? key}) : super(key: key);
+  var tripId;
+  var bookingId;
+  CreateBookingScreen({Key? key, this.tripId, this.bookingId})
+      : super(key: key);
 
   @override
-  _CreateBookingScreen createState() => _CreateBookingScreen();
+  _CreateBookingScreen createState() =>
+      _CreateBookingScreen(tripId: tripId, bookingId: bookingId);
 }
 
 class _CreateBookingScreen extends State<CreateBookingScreen>
     with TickerProviderStateMixin {
+  int tripId;
+  int bookingId;
+  _CreateBookingScreen({required this.tripId, required this.bookingId});
   AnimationController? animationController;
   BookingService bookingService = BookingService();
   List<ContactFormItemWidget> clientForms = List.empty(growable: true);
@@ -41,10 +49,12 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
 
   @override
   Widget build(BuildContext context) {
+    ProgressDialog pd = ProgressDialog(context: context);
     var brightness = MediaQuery.of(context).platformBrightness;
 
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      appBar: ApplicationToolbar(title: "Booking"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
           : MobydickAppTheme.nearlyBlack,
@@ -103,8 +113,12 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
                               MobydickAppTheme.nearlyBlue, // background
                           foregroundColor: Colors.white, // foreground
                         ),
-                        onPressed: () {
-                          onSave();
+                        onPressed: () async {
+                          //pd.show(msg: "Adicionando reserva");
+                          await onSave(tripId, pd).then(
+                              (value) => /*pd.close()*/
+                                  Navigator.pushNamed(context, 'tripDetails',
+                                      arguments: {"id": 21}));
                         },
                         label: const Text(
                           'ADICIONAR',
@@ -127,12 +141,8 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
     );
   }
 
-  Future<void> onSave() async {
-    ProgressDialog pd = ProgressDialog(context: context);
-    pd.show();
-
+  Future<int> onSave(int idTrip, ProgressDialog pd) async {
     bool allValid = true;
-
     clientForms
         .forEach((element) => allValid = (allValid && element.isValidated()));
 
@@ -141,10 +151,9 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
           clientForms.map((e) => e.contactModel).toList();
 
       BookingCreateModel bookingCreatetModel =
-          BookingCreateModel(idTrip: 21, boookingClient: clientsDetails);
+          BookingCreateModel(idTrip: idTrip, boookingClient: clientsDetails);
 
       int response = await bookingService.addBooking(bookingCreatetModel);
-      pd.close();
 
       if (response == 0) {
         //sucesss
@@ -154,6 +163,8 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
     } else {
       debugPrint("Form is Not Valid");
     }
+
+    return 1;
   }
 
   //Delete specific form

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobydick/models/ticket_model.dart';
 import 'package:mobydick/services/trips_service.dart';
+import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
 import '../models/trip_details_model.dart';
 import 'booking/client_details.dart';
@@ -55,6 +56,7 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      appBar: ApplicationToolbar(title: "Viagem"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
           : MobydickAppTheme.nearlyBlack,

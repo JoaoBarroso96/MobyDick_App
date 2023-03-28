@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
+import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
 
 import '../models/trip_model.dart';
@@ -27,8 +28,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     //futureTrips = tripService.fetchTripsByDay();
 
     setState(() {
-        futureTrips = tripService.fetchTripsByDay();
-      });
+      futureTrips = tripService.fetchTripsByDay();
+    });
 
     super.initState();
   }
@@ -49,12 +50,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      appBar: ApplicationToolbar(title: "Home"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
           : MobydickAppTheme.nearlyBlack,
       body: FutureBuilder<Map<String, List<Trip>>>(
         future: futureTrips,
-        builder: (BuildContext context, AsyncSnapshot<Map<String, List<Trip>>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<String, List<Trip>>> snapshot) {
           if (!snapshot.hasData) {
             return Padding(
                 padding: EdgeInsets.only(

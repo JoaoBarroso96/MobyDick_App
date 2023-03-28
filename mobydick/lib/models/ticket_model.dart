@@ -1,7 +1,6 @@
 import 'package:mobydick/models/booking_client_model.dart';
 
-class 
-Ticket {
+class Ticket {
   String ref;
   String state;
   String paymentState;

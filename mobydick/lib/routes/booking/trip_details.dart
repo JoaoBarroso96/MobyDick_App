@@ -167,7 +167,7 @@ class TripDetailsWidget extends StatelessWidget {
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Visibility(
               visible: tripDetails.state != "Cancel",
@@ -182,7 +182,7 @@ class TripDetailsWidget extends StatelessWidget {
                   size: 17.0,
                 ),
                 label: Text(
-                  'Cancelar',
+                  'Cancelar Viagem',
                   style: const TextStyle(
                     fontFamily: MobydickAppTheme.fontName,
                     fontWeight: FontWeight.w400,
@@ -193,6 +193,30 @@ class TripDetailsWidget extends StatelessWidget {
               ),
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+            Visibility(
+              visible: tripDetails.state != "Cancel",
+              child: ElevatedButton.icon(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        MobydickAppTheme.tripLowOccupancy)),
+                onPressed: () => Navigator.pushNamed(context, 'createBooking',
+                    arguments: {"tripId": tripDetails.pk, "bookingId": -1}),
+                icon: Icon(
+                  // <-- Icon
+                  Icons.add,
+                  size: 17.0,
+                ),
+                label: Text(
+                  'Adicionar Reserva',
+                  style: const TextStyle(
+                    fontFamily: MobydickAppTheme.fontName,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    letterSpacing: -0.2,
+                  ),
+                ), // <-- Text
+              ),
+            ),
           ],
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),

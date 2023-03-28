@@ -1,18 +1,30 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 
 import '../../mobydick_app_theme.dart';
 import '../../models/ticket_model.dart';
+import '../../services/booking_service.dart';
 
-class BookingWidget extends StatelessWidget {
-  BookingWidget({Key? key, required this.tickets}) : super(key: key);
-
+class BookingWidget extends StatefulWidget {
   final List<Ticket> tickets;
+  BookingWidget({Key? key, required this.tickets}) : super(key: key);
+  @override
+  State createState() {
+    return _BookingWidget();
+  }
+}
+
+class _BookingWidget extends State<BookingWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool paid = tickets[0].paymentState != "none";
+    bool paid = widget.tickets[0].paymentState != "none";
 
     return Container(
       decoration: BoxDecoration(
@@ -23,11 +35,11 @@ class BookingWidget extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
           child: ExpandablePanel(
             header: HeaderWidget(
-                contact: tickets[0].bookingClientModel.number.toString(),
-                name: tickets[0].bookingClientModel.name.toString(),
+                contact: widget.tickets[0].bookingClientModel.number.toString(),
+                name: widget.tickets[0].bookingClientModel.name.toString(),
                 paid: paid),
             collapsed: Text(
-              "${tickets.length} clientes",
+              "${widget.tickets.length} clientes",
               softWrap: true,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -35,7 +47,7 @@ class BookingWidget extends StatelessWidget {
             expanded: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                FullBookingDetailsWidget(ticket: tickets[0]),
+                FullBookingDetailsWidget(ticket: widget.tickets[0]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -75,7 +87,7 @@ class BookingWidget extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                for (var item in tickets) TicketRowWidget(ticket: item)
+                for (var item in widget.tickets) TicketRowWidget(ticket: item)
               ],
             ),
             theme: const ExpandableThemeData(
@@ -179,10 +191,33 @@ class HeaderWidget extends StatelessWidget {
   }
 }
 
-class FullBookingDetailsWidget extends StatelessWidget {
-  FullBookingDetailsWidget({Key? key, required this.ticket}) : super(key: key);
-
+class FullBookingDetailsWidget extends StatefulWidget {
   final Ticket ticket;
+
+  FullBookingDetailsWidget({Key? key, required this.ticket}) : super(key: key);
+  @override
+  State createState() {
+    return _FullBookingDetailsWidget();
+  }
+}
+
+class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
+  BookingService bookingService = BookingService();
+  String dropdownvalue = 'Dinheiro';
+  var items = [
+    'Dinheiro',
+    'Transferência',
+  ];
+
+  int test = 0;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _update() {
+    setState(() => widget.ticket.paymentState = "Money");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +242,7 @@ class FullBookingDetailsWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ticket.bookingClientModel.email.toString(),
+                  widget.ticket.bookingClientModel.email.toString(),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: MobydickAppTheme.fontName,
@@ -234,7 +269,7 @@ class FullBookingDetailsWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ticket.bookingClientModel.hotel.toString(),
+                  widget.ticket.bookingClientModel.hotel.toString(),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: MobydickAppTheme.fontName,
@@ -261,7 +296,7 @@ class FullBookingDetailsWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ticket.bookingClientModel.nationality.toString(),
+                  widget.ticket.bookingClientModel.nationality.toString(),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: MobydickAppTheme.fontName,
@@ -288,7 +323,7 @@ class FullBookingDetailsWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ticket.bookingClientModel.source.toString(),
+                  widget.ticket.bookingClientModel.source.toString(),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: MobydickAppTheme.fontName,
@@ -312,7 +347,8 @@ class FullBookingDetailsWidget extends StatelessWidget {
                   color: Colors.amberAccent,
                   child: InkWell(
                     splashColor: Colors.green,
-                    onTap: () {},
+                    onTap: () => Navigator.pushNamed(context, 'createBooking',
+                        arguments: {"id": 1}),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -338,7 +374,7 @@ class FullBookingDetailsWidget extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.05,
             ),
             Visibility(
-              visible: ticket.paymentState == "none",
+              visible: widget.ticket.paymentState == "none",
               child: SizedBox.fromSize(
                 size: Size(56, 56),
                 child: ClipOval(
@@ -346,7 +382,79 @@ class FullBookingDetailsWidget extends StatelessWidget {
                     color: Colors.amberAccent,
                     child: InkWell(
                       splashColor: Colors.green,
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            String contentText = "Content of Dialog";
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text("Método Pagamento"),
+                                  content: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.13,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                            'Qual o método pagamento utilizado?'),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02,
+                                        ),
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                            isExpanded: true,
+                                            // Initial Value
+                                            value: dropdownvalue,
+                                            // Down Arrow Icon
+                                            icon: const Icon(
+                                                Icons.keyboard_arrow_down),
+                                            // Array list of items
+                                            items: items.map((String items) {
+                                              return DropdownMenuItem(
+                                                value: items,
+                                                child: Text(items),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String? value) {
+                                              // This is called when the user selects an item.
+                                              setState(() {
+                                                dropdownvalue = value!;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        int result = await onPayment(
+                                            context,
+                                            widget.ticket.bookingClientModel
+                                                .bookingId!
+                                                .toString(),
+                                            dropdownvalue);
+
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Change"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -374,11 +482,21 @@ class FullBookingDetailsWidget extends StatelessWidget {
       ],
     );
   }
+
+  Future<int> onPayment(
+      BuildContext context, String bookingId, String method) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await bookingService.payment(bookingId, method);
+    pd.close();
+    return response;
+  }
 }
 
 class TicketRowWidget extends StatelessWidget {
   TicketRowWidget({Key? key, required this.ticket}) : super(key: key);
-
+  BookingService bookingService = BookingService();
   final Ticket ticket;
 
   @override
@@ -432,15 +550,23 @@ class TicketRowWidget extends StatelessWidget {
                         visible: ticket.state == "Pending",
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            if (await confirm(
+                            bool c = await confirm(
                               context,
                               title: const Text('Confirmação'),
                               content: Text(
                                   'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}'),
                               textOK: const Text('Sim'),
                               textCancel: const Text('Não'),
-                            )) {
-                              return print('pressedOK');
+                            );
+
+                            if (c) {
+                              return print("pressedOK");
+                              /*onCheckin(context,
+                                      ticket).then((value) =>
+                                  Navigator.pushNamed(context, 'tripDetails',
+                                      arguments: {"id": 21}));
+                              print("batastas")
+                                  ;*/
                             }
                             return print('pressedCancel');
                           },
@@ -490,5 +616,17 @@ class TicketRowWidget extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  Future<void> onCheckin(BuildContext context, Ticket ticket) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await bookingService.checkin(ticket.ref);
+    pd.close();
+
+    /* if (response == 0) {
+      ticket.state = "Checkin";
+    } else {}*/
   }
 }
