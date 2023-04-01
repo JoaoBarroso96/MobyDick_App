@@ -9,16 +9,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return /*BottomNavigationBar(
-      currentIndex: currentIndex.value,
-      onTap: onTap,
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorites'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      ],
-    )*/
-        SalomonBottomBar(
+    return SalomonBottomBar(
       currentIndex: currentIndex.value,
       onTap: onTap,
       //onTap: (i) => setState(() => _currentIndex = i),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/routes/home.dart';
+import 'package:mobydick/routes/search/search_page.dart';
 import 'package:mobydick/routes/view_booking.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
@@ -31,31 +32,9 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
   List<Widget> pages = [
     CalendarScreen(),
     HomeScreen(),
-    CalendarScreen(),
+    SearchPage(),
     CalendarScreen()
   ];
-
-  Navigator navigator = Navigator(
-    onGenerateRoute: (settings) {
-      Widget page = CalendarScreen(); //HomeScreen();
-      if (settings.name == 'tripDetails') {
-        Map arguments = settings.arguments as Map;
-        page = ViewBookingScreen(tripId: arguments["id"]);
-      } else if (settings.name == 'createBooking') {
-        Map arguments = settings.arguments as Map;
-        page = CreateBookingScreen(
-          tripId: arguments["tripId"],
-          bookingId: arguments["bookingId"],
-        );
-      } else if (settings.name == /* 'createBooking'*/ 'page1') {
-        page = CreateBookingScreen();
-      } else if (settings.name == 'page0') {
-        page = HomeScreen();
-      }
-
-      return MaterialPageRoute(builder: (_) => page);
-    },
-  );
 
   @override
   void initState() {
@@ -91,13 +70,13 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
             switch (settings.name) {
               case '/1':
-                builder = (BuildContext _) => HomeScreen();
+                builder = (BuildContext _) => CalendarScreen();
                 break;
               case '/2':
-                builder = (BuildContext _) => CalendarScreen();
+                builder = (BuildContext _) => HomeScreen();
                 break;
               case '/3':
-                builder = (BuildContext _) => CalendarScreen();
+                builder = (BuildContext _) => SearchPage();
                 break;
               case 'createBooking':
                 Map arguments = settings.arguments as Map;
