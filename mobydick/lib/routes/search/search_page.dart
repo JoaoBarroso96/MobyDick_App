@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobydick/models/ticket_model.dart';
+import 'package:mobydick/services/ticket_service.dart';
 import '../../app_bar/AppBar.dart';
 import '../../mobydick_app_theme.dart';
 
@@ -11,13 +13,14 @@ class SearchPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return state;
   }
-
-  bool isValidated() => state.validate();
 }
 
 class _SearchPage extends State<SearchPage> {
   final formKey = GlobalKey<FormState>();
-
+  TicketService ticketService = TicketService();
+  TextEditingController _searchController = TextEditingController();
+  String searchterm = "";
+  List<Ticket> tickets = [];
   @override
   void initState() {
     super.initState();
@@ -58,7 +61,7 @@ class _SearchPage extends State<SearchPage> {
                     children: [
                       Row(
                         mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
                             "Pesquisar",
@@ -70,9 +73,9 @@ class _SearchPage extends State<SearchPage> {
                         ],
                       ),
                       TextFormField(
-                        //controller: widget._nameController,
-                        /*onChanged: (value) => widget.contactModel.name = value,
-                  onSaved: (value) => widget.contactModel.name = value!,*/
+                        controller: _searchController,
+                        onChanged: (value) => searchterm = value,
+                        onSaved: (value) => searchterm = value!,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 12),
                           border: OutlineInputBorder(),
@@ -90,7 +93,7 @@ class _SearchPage extends State<SearchPage> {
                   0,
                   MediaQuery.of(context).size.height * 0.03,
                   0,
-                  MediaQuery.of(context).size.height * 0.19),
+                  MediaQuery.of(context).size.height * 0.07),
               child: Center(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.07,
@@ -108,10 +111,7 @@ class _SearchPage extends State<SearchPage> {
                     ),
                     onPressed: () async {
                       //pd.show(msg: "Adicionando reserva");
-                      /*await onSave(tripId, pd).then((value) => /*pd.close()*/
-                          Navigator.pushNamed(context, 'tripDetails',
-                              arguments: {"id": 21}))*/
-                      ;
+                      await onSearch();
                     },
                     label: const Text(
                       'Pesquisar',
@@ -128,15 +128,159 @@ class _SearchPage extends State<SearchPage> {
                 ),
               ),
             ),
+            Visibility(
+                visible: tickets.isNotEmpty,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      MediaQuery.of(context).size.width * 0.03,
+                      0,
+                      MediaQuery.of(context).size.width * 0.03,
+                      0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Bilhetes',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: MobydickAppTheme.fontName,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 21,
+                          letterSpacing: 0.2,
+                          color: MobydickAppTheme.darkText,
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "Nome",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: MobydickAppTheme.fontName,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              letterSpacing: -0.2,
+                              color: MobydickAppTheme.darkText,
+                            ),
+                          ),
+                          Text(
+                            "Referência",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: MobydickAppTheme.fontName,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              letterSpacing: -0.2,
+                              color: MobydickAppTheme.darkText,
+                            ),
+                          ),
+                          Text(
+                            "Ver",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: MobydickAppTheme.fontName,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              letterSpacing: -0.2,
+                              color: MobydickAppTheme.darkText,
+                            ),
+                          ),
+                        ],
+                      ),
+                      for (var item in tickets) TicketInfo(ticket: item),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
+                    ],
+                  ),
+                )),
+            Visibility(
+                visible: tickets.isEmpty,
+                child: Column(
+                  children: [
+                    const Text(
+                      'Nenhum bilhete encontrado',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: MobydickAppTheme.fontName,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        letterSpacing: 0.2,
+                        color: MobydickAppTheme.dark_grey,
+                      ),
+                    ),
+                  ],
+                ))
           ],
         ));
   }
 
-  bool validate() {
-    //Validate Form Fields
-    /*bool? validate = formKey.currentState?.validate();
-    if (validate) formKey.currentState!.save();
-    return validate;*/
-    return true;
+  Future<int> onSearch() async {
+    print(searchterm);
+    List<Ticket> temp = await ticketService.searchTickets(searchterm);
+    setState(() {
+      tickets = temp;
+    });
+    return 1;
+  }
+}
+
+class TicketInfo extends StatelessWidget {
+  TicketInfo({Key? key, required this.ticket}) : super(key: key);
+  final Ticket ticket;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(bottom: 3, top: 10),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Color.fromARGB(255, 165, 219, 255),
+              width: 1.0,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                ticket.bookingClientModel.name.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: MobydickAppTheme.fontName,
+                  fontWeight: FontWeight.w100,
+                  fontSize: 13,
+                  letterSpacing: -0.2,
+                  color: MobydickAppTheme.darkText,
+                ),
+              ),
+              Text(
+                ticket.ref.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: MobydickAppTheme.fontName,
+                  fontWeight: FontWeight.w100,
+                  fontSize: 13,
+                  letterSpacing: -0.2,
+                  color: MobydickAppTheme.darkText,
+                ),
+              ),
+              IconButton(
+                onPressed: () async {},
+                icon: Icon(
+                  Icons.visibility,
+                  size: 19.0,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
