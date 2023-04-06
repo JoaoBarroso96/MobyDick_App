@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/routes/home.dart';
 import 'package:mobydick/routes/search/search_page.dart';
+import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
@@ -89,6 +90,11 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 Map arguments = settings.arguments as Map;
                 builder = (BuildContext _) =>
                     ViewBookingScreen(tripId: arguments["id"]);
+                break;
+              case 'ticketDetails':
+                Map arguments = settings.arguments as Map;
+                builder = (BuildContext _) =>
+                    TicketDetailPage(ticket: arguments["ticket"]);
                 break;
               default:
                 builder = (BuildContext _) => HomeScreen();

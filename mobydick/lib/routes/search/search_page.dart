@@ -273,7 +273,10 @@ class TicketInfo extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () async {},
+                onPressed: () {
+                  Navigator.pushNamed(context, 'ticketDetails',
+                      arguments: {"ticket": ticket});
+                },
                 icon: Icon(
                   Icons.visibility,
                   size: 19.0,
