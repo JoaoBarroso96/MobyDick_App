@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/routes/home.dart';
+import 'package:mobydick/routes/login/login_page.dart';
 import 'package:mobydick/routes/search/search_page.dart';
 import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
@@ -78,6 +79,9 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 break;
               case '/3':
                 builder = (BuildContext _) => SearchPage();
+                break;
+              case '/4':
+                builder = (BuildContext _) => LoginScreen();
                 break;
               case 'createBooking':
                 Map arguments = settings.arguments as Map;
