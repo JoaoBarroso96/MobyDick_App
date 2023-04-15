@@ -40,6 +40,14 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
     super.initState();
   }
 
+  Future<bool> refreshData() async {
+    setState(() {
+      futureTripDetails = tripService.fetchTripBookings(tripId);
+    });
+
+    return true;
+  }
+
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 0));
     return true;
@@ -74,7 +82,11 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
               child: ListView(scrollDirection: Axis.vertical, children: [
                 TripDetailsWidget(tripDetails: snapshot.data!),
                 for (var item in snapshot.data!.tickets.values)
-                  BookingWidget(tickets: item),
+                  BookingWidget(
+                    tickets: item,
+                    tripID: tripId,
+                    onRefresh: refreshData,
+                  ),
               ]),
             );
           }

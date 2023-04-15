@@ -1,10 +1,11 @@
-import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mobydick/app_bar/AppBar.dart';
 import 'package:mobydick/mobydick_app_theme.dart';
 import 'package:mobydick/models/ticket_model.dart';
+import 'package:mobydick/services/booking_service.dart';
 import 'package:mobydick/services/ticket_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 
 class TicketDetailPage extends StatefulWidget {
   Ticket ticket;
@@ -21,6 +22,7 @@ class TicketDetailPage extends StatefulWidget {
 class _TicketDetailPage extends State<TicketDetailPage> {
   final formKey = GlobalKey<FormState>();
   TicketService ticketService = TicketService();
+  BookingService bookingService = BookingService();
 
   @override
   void initState() {
@@ -281,26 +283,41 @@ class _TicketDetailPage extends State<TicketDetailPage> {
                 Visibility(
                   visible: widget.ticket.state == "Pending",
                   child: ElevatedButton.icon(
-                    onPressed: () async {
-                      bool c = await confirm(
-                        context,
-                        title: const Text('Confirmação'),
-                        content: Text(
-                            'Deseja fazer checkin do passageiro ${widget.ticket.bookingClientModel.name}'),
-                        textOK: const Text('Sim'),
-                        textCancel: const Text('Não'),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          String contentText = "Content of Dialog";
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: Text("Confirmar checkin"),
+                                content: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.07,
+                                  child: Text(
+                                      'Deseja fazer checkin do passageiro ${widget.ticket.bookingClientModel.name}?'),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text("Não"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      int result = await onCheckin(
+                                        context,
+                                      );
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Check-in"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       );
-
-                      if (c) {
-                        return print("pressedOK");
-                        /*onCheckin(context,
-                                      ticket).then((value) =>
-                                  Navigator.pushNamed(context, 'tripDetails',
-                                      arguments: {"id": 21}));
-                              print("batastas")
-                                  ;*/
-                      }
-                      return print('pressedCancel');
                     },
                     icon: Icon(
                       // <-- Icon
@@ -345,5 +362,25 @@ class _TicketDetailPage extends State<TicketDetailPage> {
             ),
           ],
         ));
+  }
+
+  Future<int> onCheckin(BuildContext context) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await bookingService.checkin(widget.ticket.ref);
+    if (response == 0) {
+      setState(() {
+        widget.ticket.state = "Checkin";
+      });
+    }
+
+    pd.close();
+
+    return response;
+
+    /* if (response == 0) {
+      ticket.state = "Checkin";
+    } else {}*/
   }
 }

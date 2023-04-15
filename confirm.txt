@@ -1,0 +1,21 @@
+() async {
+                      bool c = await confirm(
+                        context,
+                        title: const Text('Confirmação'),
+                        content: Text(
+                            'Deseja fazer checkin do passageiro ${widget.ticket.bookingClientModel.name}'),
+                        textOK: const Text('Sim'),
+                        textCancel: const Text('Não'),
+                      );
+
+                      if (c) {
+                        return print("pressedOK");
+                        /*onCheckin(context,
+                                      ticket).then((value) =>
+                                  Navigator.pushNamed(context, 'tripDetails',
+                                      arguments: {"id": 21}));
+                              print("batastas")
+                                  ;*/
+                      }
+                      return print('pressedCancel');
+                    }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../mobydick_app_theme.dart';
+import 'package:mobydick/globals.dart' as globals;
 
 class ApplicationToolbar extends StatelessWidget with PreferredSizeWidget {
   String title = "";
@@ -34,7 +35,9 @@ class ApplicationToolbar extends StatelessWidget with PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.menu),
         tooltip: 'Menu Icon',
-        onPressed: () {},
+        onPressed: () {
+          globals.key.currentState!.openDrawer();
+        },
       ),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/routes/home.dart';
 import 'package:mobydick/routes/login/login_page.dart';
 import 'package:mobydick/routes/search/search_page.dart';
+import 'package:mobydick/routes/ticket/rq_reader.dart';
 import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -11,6 +13,7 @@ import '../mobydick_app_theme.dart';
 import '../models/tabIcon_data.dart';
 import 'calendar.dart';
 import 'create_booking.dart';
+import 'package:mobydick/globals.dart' as globals;
 
 class MobydickHomeScreen extends StatefulWidget {
   @override
@@ -31,13 +34,6 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
   AnimationController? animationController;
 
-  List<Widget> pages = [
-    CalendarScreen(),
-    HomeScreen(),
-    SearchPage(),
-    CalendarScreen()
-  ];
-
   @override
   void initState() {
     animationController = AnimationController(
@@ -55,6 +51,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: globals.key,
         bottomNavigationBar: ValueListenableBuilder<int>(
           valueListenable: _currentIndex,
           builder: (context, value, child) {
@@ -64,6 +61,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
             );
           },
         ),
+        drawer: DrawerMenu(),
         backgroundColor: Colors.transparent,
         body: Navigator(
           key: _navigatorKey,
@@ -81,7 +79,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 builder = (BuildContext _) => SearchPage();
                 break;
               case '/4':
-                builder = (BuildContext _) => LoginScreen();
+                builder = (BuildContext _) => QRReaderScreen();
                 break;
               case 'createBooking':
                 Map arguments = settings.arguments as Map;

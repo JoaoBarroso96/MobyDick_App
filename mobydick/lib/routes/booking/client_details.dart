@@ -9,7 +9,14 @@ import '../../services/booking_service.dart';
 
 class BookingWidget extends StatefulWidget {
   final List<Ticket> tickets;
-  BookingWidget({Key? key, required this.tickets}) : super(key: key);
+  final int tripID;
+  final Function() onRefresh;
+  BookingWidget(
+      {Key? key,
+      required this.tickets,
+      required this.tripID,
+      required this.onRefresh})
+      : super(key: key);
   @override
   State createState() {
     return _BookingWidget();
@@ -47,7 +54,10 @@ class _BookingWidget extends State<BookingWidget> {
             expanded: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                FullBookingDetailsWidget(ticket: widget.tickets[0]),
+                FullBookingDetailsWidget(
+                  ticket: widget.tickets[0],
+                  onRefresh: widget.onRefresh,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -87,7 +97,12 @@ class _BookingWidget extends State<BookingWidget> {
                   ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                for (var item in widget.tickets) TicketRowWidget(ticket: item)
+                for (var item in widget.tickets)
+                  TicketRowWidget(
+                    ticket: item,
+                    tripId: widget.tripID,
+                    onRefresh: widget.onRefresh,
+                  )
               ],
             ),
             theme: const ExpandableThemeData(
@@ -193,8 +208,11 @@ class HeaderWidget extends StatelessWidget {
 
 class FullBookingDetailsWidget extends StatefulWidget {
   final Ticket ticket;
+  final Function() onRefresh;
 
-  FullBookingDetailsWidget({Key? key, required this.ticket}) : super(key: key);
+  FullBookingDetailsWidget(
+      {Key? key, required this.ticket, required this.onRefresh})
+      : super(key: key);
   @override
   State createState() {
     return _FullBookingDetailsWidget();
@@ -444,6 +462,10 @@ class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
                                                 .toString(),
                                             dropdownvalue);
 
+                                        if (result == 0) {
+                                          //reload
+                                          widget.onRefresh();
+                                        }
                                         Navigator.pop(context);
                                       },
                                       child: Text("Change"),
@@ -495,9 +517,16 @@ class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
 }
 
 class TicketRowWidget extends StatelessWidget {
-  TicketRowWidget({Key? key, required this.ticket}) : super(key: key);
+  TicketRowWidget(
+      {Key? key,
+      required this.ticket,
+      required this.tripId,
+      required this.onRefresh})
+      : super(key: key);
   BookingService bookingService = BookingService();
+  final Function() onRefresh;
   final Ticket ticket;
+  final int tripId;
 
   @override
   Widget build(BuildContext context) {
@@ -550,25 +579,47 @@ class TicketRowWidget extends StatelessWidget {
                         visible: ticket.state == "Pending",
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            bool c = await confirm(
-                              context,
-                              title: const Text('Confirmação'),
-                              content: Text(
-                                  'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}'),
-                              textOK: const Text('Sim'),
-                              textCancel: const Text('Não'),
-                            );
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                String contentText = "Content of Dialog";
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text("Confirmar checkin"),
+                                      content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
+                                        child: Text(
+                                            'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}?'),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text("Não"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            int result = await onCheckin(
+                                              context,
+                                            );
+                                            if (result == 0) {
+                                              //reload
+                                              onRefresh();
+                                            }
 
-                            if (c) {
-                              return print("pressedOK");
-                              /*onCheckin(context,
-                                      ticket).then((value) =>
-                                  Navigator.pushNamed(context, 'tripDetails',
-                                      arguments: {"id": 21}));
-                              print("batastas")
-                                  ;*/
-                            }
-                            return print('pressedCancel');
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Check-in"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
                           },
                           icon: Icon(
                             // <-- Icon
@@ -618,13 +669,15 @@ class TicketRowWidget extends StatelessWidget {
         ));
   }
 
-  Future<void> onCheckin(BuildContext context, Ticket ticket) async {
+  Future<int> onCheckin(BuildContext context) async {
     ProgressDialog pd = ProgressDialog(context: context);
-    pd.show(msg: "Aguardando servidor");
+    pd.show(msg: "Aguarde");
 
     int response = await bookingService.checkin(ticket.ref);
+
     pd.close();
 
+    return response;
     /* if (response == 0) {
       ticket.state = "Checkin";
     } else {}*/

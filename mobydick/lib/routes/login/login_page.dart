@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobydick/routes/mobydick.dart';
+import 'package:mobydick/services/user_service.dart';
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:validators/validators.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,15 +14,25 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _textEditingController = TextEditingController();
-
+  UserService userService = UserService();
   @override
   void dispose() {
     _textEditingController.clear();
     super.dispose();
   }
 
+  @override
+  void initState() {
+    setState(() {});
+
+    super.initState();
+  }
+
   bool isEmailCorrect = false;
   final _formKey = GlobalKey<FormState>();
+  bool apiCall = false;
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
             // color: Colors.red.withOpacity(0.1),
             image: DecorationImage(
-                image: NetworkImage(
-                    // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShp2T_UoR8vXNZXfMhtxXPFvmDWmkUbVv3A40TYjcunag0pHFS_NMblOClDVvKLox4Atw&usqp=CAU',
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx7IBkCtYd6ulSfLfDL-aSF3rv6UfmWYxbSE823q36sPiQNVFFLatTFdGeUSnmJ4tUzlo&usqp=CAU'),
+                image: AssetImage('assets/images/background.png'),
                 fit: BoxFit.cover,
                 opacity: 0.3)),
         child: SafeArea(
@@ -42,18 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Lottie.network(
-                      // 'https://assets6.lottiefiles.com/private_files/lf30_ulp9xiqw.json', //shakeing lock
-                      'https://assets6.lottiefiles.com/packages/lf20_k9wsvzgd.json',
-                      animate: true,
-                      height: 120,
-                      width: 600),
                   // logo here
-                  // Image.asset(
-                  //   'assets/images/logo_new.png',
-                  //   height: 120,
-                  //   width: 120,
-                  // ),
+                  Image.asset(
+                    'assets/images/mobydick.png',
+                    height: 189,
+                    width: 300,
+                  ),
                   Text(
                     'Log In Now',
                     style: GoogleFonts.indieFlower(
@@ -92,9 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               left: 20, right: 20, bottom: 20, top: 20),
                           child: TextFormField(
                             controller: _textEditingController,
+                            onSaved: (value) => email = value!,
                             onChanged: (val) {
                               setState(() {
                                 isEmailCorrect = isEmail(val);
+                                email = val;
                               });
                             },
                             decoration: const InputDecoration(
@@ -129,6 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextFormField(
                               obscuringCharacter: '*',
                               obscureText: true,
+                              onChanged: (value) => password = value,
+                              onSaved: (value) => password = value!,
                               decoration: const InputDecoration(
                                 focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide.none,
@@ -176,19 +184,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                     // padding: EdgeInsets.only(
                                     //     left: 120, right: 120, top: 20, bottom: 20),
                                     ),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    // If the form is valid, display a snackbar. In the real world,
-                                    // you'd often call a server or save the information in a database.
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Processing Data')),
-                                    );
+                                onPressed: () async {
+                                  setState(() {
+                                    apiCall = true; // Set state like this
+                                  });
+                                  bool success = await onLogin(email, password);
+                                  if (success) {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MobydickHomeScreen()),
+                                        (Route<dynamic> route) => false);
                                   }
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => loginScreen()));
                                 },
                                 child: Text(
                                   'Log In',
@@ -198,32 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-
-                  //this is button
-                  // const SizedBox(
-                  //   height: 30,
-                  // ),
-                  // ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //         shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(10.0)),
-                  //         backgroundColor: Colors.purple,
-                  //         padding: EdgeInsets.symmetric(
-                  //             horizontal: MediaQuery.of(context).size.width / 3.3,
-                  //             vertical: 20)
-                  //         // padding: EdgeInsets.only(
-                  //         //     left: 120, right: 120, top: 20, bottom: 20),
-                  //         ),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => loginScreen()));
-                  //     },
-                  //     child: Text(
-                  //       'Sounds Good!',
-                  //       style: TextStyle(fontSize: 17),
-                  //     )), //
+                  //
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -251,5 +234,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> onLogin(String username, String password) async {
+    bool response = await userService.login(username, password);
+    return response;
   }
 }

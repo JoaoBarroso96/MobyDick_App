@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/models/event_model.dart';
 import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/routes/view_booking.dart';
@@ -85,6 +86,7 @@ class _CalendarScreenState extends State<CalendarScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      drawer: DrawerMenu(),
       appBar: ApplicationToolbar(title: "Calendário"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white
