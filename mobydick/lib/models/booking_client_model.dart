@@ -41,6 +41,11 @@ class BookingClientModel {
             : json['nationality'].toString());
   }
 
+  @override
+  String toString() {
+    return "($id,$name,$email,$number,$hotel, $nationality, $source)";
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,

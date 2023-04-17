@@ -365,8 +365,11 @@ class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
                   color: Colors.amberAccent,
                   child: InkWell(
                     splashColor: Colors.green,
-                    onTap: () => Navigator.pushNamed(context, 'createBooking',
-                        arguments: {"id": 1}),
+                    onTap: () => Navigator.pushNamed(
+                        context, 'createBooking', arguments: {
+                      "tripId": -1,
+                      "bookingId": widget.ticket.bookingClientModel.bookingId
+                    }),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[

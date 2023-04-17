@@ -32,7 +32,13 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
 
-    onAdd();
+    print(bookingId);
+    if (bookingId == -1) {
+      onAdd();
+    } else {
+      loadBookingDetails();
+    }
+
     super.initState();
   }
 
@@ -114,11 +120,16 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
                           foregroundColor: Colors.white, // foreground
                         ),
                         onPressed: () async {
-                          //pd.show(msg: "Adicionando reserva");
-                          await onSave(tripId, pd).then(
-                              (value) => /*pd.close()*/
-                                  Navigator.pushNamed(context, 'tripDetails',
-                                      arguments: {"id": 21}));
+                          if (bookingId == -1) {
+                            await onSave(tripId, pd).then(
+                                (value) => /*pd.close()*/
+                                    Navigator.pushNamed(context, 'tripDetails',
+                                        arguments: {"id": tripId}));
+                          } else {
+                            await onUpdate().then((value) => /*pd.close()*/
+                                Navigator.pushNamed(context, 'tripDetails',
+                                    arguments: {"id": 21}));
+                          }
                         },
                         label: const Text(
                           'ADICIONAR',
@@ -139,6 +150,53 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
             )
           : Center(child: Text("Tap on + to Add Contact")),
     );
+  }
+
+  Future<int> loadBookingDetails() async {
+    print("BOKING " + bookingId.toString());
+    List<BookingClientModel> listBooking =
+        await bookingService.bookingDetails(bookingId);
+    setState(() {
+      for (BookingClientModel booking in listBooking) {
+        print(booking);
+        clientForms.add(ContactFormItemWidget(
+          contactTitle: clientForms.isEmpty
+              ? "Contato Principal"
+              : "Passageiro " + (clientForms.length + 1).toString(),
+          index: clientForms.length,
+          contactModel: booking,
+          onRemove: () => onRemove(booking),
+        ));
+      }
+    });
+    return 1;
+  }
+
+  Future<int> onUpdate() async {
+    bool allValid = true;
+    clientForms
+        .forEach((element) => allValid = (allValid && element.isValidated()));
+
+    if (allValid) {
+      List<BookingClientModel> clientsDetails =
+          clientForms.map((e) => e.contactModel).toList();
+
+      BookingCreateModel bookingCreatetModel =
+          BookingCreateModel(idTrip: tripId, boookingClient: clientsDetails);
+
+      int response =
+          await bookingService.updateBooking(bookingCreatetModel, bookingId);
+
+      if (response == 0) {
+        //sucesss
+
+      } else {}
+      print(response);
+    } else {
+      debugPrint("Form is Not Valid");
+    }
+
+    return 1;
   }
 
   Future<int> onSave(int idTrip, ProgressDialog pd) async {
@@ -181,6 +239,24 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
     setState(() {
       BookingClientModel _contactModel = BookingClientModel(
           id: clientForms.length, mainContact: clientForms.isEmpty);
+
+      clientForms.add(ContactFormItemWidget(
+        contactTitle: clientForms.isEmpty
+            ? "Contato Principal"
+            : "Passageiro " + (clientForms.length + 1).toString(),
+        index: clientForms.length,
+        contactModel: _contactModel,
+        onRemove: () => onRemove(_contactModel),
+      ));
+    });
+  }
+
+  onAddWithInfo() {
+    setState(() {
+      BookingClientModel _contactModel = BookingClientModel(
+          id: clientForms.length,
+          mainContact: clientForms.isEmpty,
+          name: "Batatas");
 
       clientForms.add(ContactFormItemWidget(
         contactTitle: clientForms.isEmpty
