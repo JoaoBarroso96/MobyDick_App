@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../mobydick_app_theme.dart';
 import '../../models/ticket_model.dart';
@@ -21,16 +22,34 @@ class TripDetailsWidget extends StatelessWidget {
         DateFormat('EEEE, d MMMM, yyyy').format(tripDetails.departure));
     return Column(
       children: [
-        Text(
-          day,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontFamily: MobydickAppTheme.fontName,
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            letterSpacing: -0.2,
-            color: MobydickAppTheme.darkerText,
-          ),
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  bottom: MediaQuery.of(context).size.height * 0.01),
+              child: Text(
+                day,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.quicksand(textStyle: MobydickAppTheme.title),
+              ),
+            )
+          ],
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  bottom: MediaQuery.of(context).size.height * 0.01),
+              child: Text(
+                "Overview",
+                textAlign: TextAlign.left,
+                style: GoogleFonts.quicksand(textStyle: MobydickAppTheme.title),
+              ),
+            )
+          ],
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),
         Container(
@@ -220,16 +239,19 @@ class TripDetailsWidget extends StatelessWidget {
           ],
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-        Text(
-          "Reservas",
-          textAlign: TextAlign.left,
-          style: const TextStyle(
-            fontFamily: MobydickAppTheme.fontName,
-            fontWeight: FontWeight.w500,
-            fontSize: 19,
-            letterSpacing: -0.2,
-            color: MobydickAppTheme.darkerText,
-          ),
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  bottom: MediaQuery.of(context).size.height * 0.01),
+              child: Text(
+                "Reservas",
+                textAlign: TextAlign.left,
+                style: GoogleFonts.quicksand(textStyle: MobydickAppTheme.title),
+              ),
+            )
+          ],
         ),
       ],
     );

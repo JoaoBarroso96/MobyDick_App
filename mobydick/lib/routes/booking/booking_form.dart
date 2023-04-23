@@ -53,7 +53,7 @@ class _ContactFormItemWidgetState extends State<ContactFormItemWidget> {
   @override
   void initState() {
     isMainContact = widget.index != 0;
-    if (widget.contactModel.id != 0 && isMainContact) {
+    if (widget.contactModel.id != 0 && !isMainContact) {
       dropdownvalue = widget.contactModel.source!;
     }
     widget._nameController.text = widget.contactModel.name.toString();

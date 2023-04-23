@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/models/trip_model.dart';
 import '../../main.dart';
 import '../../mobydick_app_theme.dart';
@@ -20,7 +21,7 @@ class TripsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    final DateFormat formatter = DateFormat('dd MMMM yyyy', 'pt');
     String day = "";
     if (tripsDay.isNotEmpty) {
       day = formatter.format(tripsDay[0].departure);
@@ -29,66 +30,32 @@ class TripsView extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.05,
+          height: MediaQuery.of(context).size.height * 0.02,
         ),
-        Container(
-            width: MediaQuery.of(context).size.width * 0.94,
-            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 183, 241, 255),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 5,
-                  blurRadius: 13,
-                  offset: Offset(0, 4), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.013,
-                  ),
-                  Text(
-                    day,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 21,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.005,
-                        width: MediaQuery.of(context).size.width * 0.25,
-                        decoration: BoxDecoration(
-                          color: MobydickAppTheme.dark_grey,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(3.0)),
-                        ),
-                      )),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: List.generate(
-                      tripsDay.length,
-                      (index) {
-                        return TripDetail(trip: tripsDay[index]);
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                ]))
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  bottom: MediaQuery.of(context).size.height * 0.01),
+              child: Text(
+                day,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.quicksand(textStyle: MobydickAppTheme.title),
+              ),
+            )
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: List.generate(
+            tripsDay.length,
+            (index) {
+              return TripDetail(trip: tripsDay[index]);
+            },
+          ),
+        ),
       ],
     );
   }
@@ -104,85 +71,119 @@ class TripDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.04),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+      decoration: BoxDecoration(
+        color: MobydickAppTheme.pallet5,
+        borderRadius: BorderRadius.all(Radius.circular(2)),
+        boxShadow: [
+          BoxShadow(
+            color: MobydickAppTheme.dark_grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: Offset(2, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width * 0.04,
+          right: MediaQuery.of(context).size.width * 0.04,
+          bottom: MediaQuery.of(context).size.height * 0.03),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * 0.04,
+            MediaQuery.of(context).size.height * 0.01,
+            MediaQuery.of(context).size.width * 0.04,
+            MediaQuery.of(context).size.height * 0.02),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(
+                        Icons.access_time,
+                        color: MobydickAppTheme.pallet2,
+                        size: 27.0,
+                      ),
+                      Text(
+                        "  ${DateFormat.Hm().format(trip.departure)}",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.lato(
+                            textStyle: MobydickAppTheme.subtitle),
+                      ),
+                      Text(
+                        "  (${trip.occupancy}/${trip.capacity})",
+                        textAlign: TextAlign.left,
+                        style:
+                            GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    iconSize: 27,
+                    color: MobydickAppTheme.pallet2,
+                    icon: const Icon(Icons.visibility),
+                    onPressed: () => Navigator.pushNamed(context, 'tripDetails',
+                        arguments: {"id": trip.pk}),
+                  ),
+                ],
+              ),
+              Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      "${DateFormat.Hm().format(trip.departure)} - ",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 19,
-                        letterSpacing: 0.5,
-                        color: MobydickAppTheme.lightText,
-                      ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    Text(
-                      "(${trip.occupancy}/${trip.capacity})",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
-                        letterSpacing: 0.5,
-                        color: calculateColor(),
-                      ),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  iconSize: 27,
-                  color: MobydickAppTheme.nearlyBlue,
-                  icon: const Icon(Icons.visibility),
-                  onPressed: () => Navigator.pushNamed(context, 'tripDetails',
-                      arguments: {"id": trip.pk}),
-                ),
-              ],
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.03,
-                    decoration: BoxDecoration(
-                      color: HexColor('#F56E98').withOpacity(0.2),
-                      borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width *
-                              0.8 *
-                              trip.getOccupancyPercentage(),
-                          height: MediaQuery.of(context).size.height * 0.03,
-                          decoration: BoxDecoration(
-                            color: MobydickAppTheme.nearlyBlue,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.0)),
-                          ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.92,
+                      height: MediaQuery.of(context).size.height * 0.03,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: MobydickAppTheme.pallet2,
                         ),
-                      ],
+                        color: HexColor('#F56E98').withOpacity(0),
+                        borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Stack(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width *
+                                    0.92 *
+                                    trip.getOccupancyPercentage(),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.03,
+                                decoration: BoxDecoration(
+                                  color: MobydickAppTheme.pallet2,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(3.0)),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width *
+                                      0.88 *
+                                      trip.getOccupancyPercentage(),
+                                ),
+                                child: Icon(
+                                  Icons.directions_boat_filled,
+                                  color: MobydickAppTheme.pallet1,
+                                  size: 35.0,
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ]),
-          ]),
+                  ]),
+            ]),
+      ),
     );
   }
 

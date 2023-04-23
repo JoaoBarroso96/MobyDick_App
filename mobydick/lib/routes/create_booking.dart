@@ -26,17 +26,18 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
   AnimationController? animationController;
   BookingService bookingService = BookingService();
   List<ContactFormItemWidget> clientForms = List.empty(growable: true);
+  String btnText = "ADICIONAR";
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
 
-    print(bookingId);
     if (bookingId == -1) {
       onAdd();
     } else {
       loadBookingDetails();
+      btnText = "ALTERAR";
     }
 
     super.initState();
@@ -128,18 +129,18 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
                           } else {
                             await onUpdate().then((value) => /*pd.close()*/
                                 Navigator.pushNamed(context, 'tripDetails',
-                                    arguments: {"id": 21}));
+                                    arguments: {"id": tripId}));
                           }
                         },
-                        label: const Text(
-                          'ADICIONAR',
+                        label: Text(
+                          btnText,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: MobydickAppTheme.fontName,
                             fontWeight: FontWeight.w100,
                             fontSize: 21,
                             letterSpacing: 0.2,
-                            color: MobydickAppTheme.white,
+                            color: MobydickAppTheme.pallet5,
                           ),
                         ),
                       ),
@@ -153,12 +154,10 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
   }
 
   Future<int> loadBookingDetails() async {
-    print("BOKING " + bookingId.toString());
     List<BookingClientModel> listBooking =
         await bookingService.bookingDetails(bookingId);
     setState(() {
       for (BookingClientModel booking in listBooking) {
-        print(booking);
         clientForms.add(ContactFormItemWidget(
           contactTitle: clientForms.isEmpty
               ? "Contato Principal"
@@ -238,7 +237,12 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
   onAdd() {
     setState(() {
       BookingClientModel _contactModel = BookingClientModel(
-          id: clientForms.length, mainContact: clientForms.isEmpty);
+          id: 0,
+          mainContact: clientForms.isEmpty,
+          name: "",
+          number: "",
+          email: "",
+          hotel: "");
 
       clientForms.add(ContactFormItemWidget(
         contactTitle: clientForms.isEmpty
@@ -253,10 +257,8 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
 
   onAddWithInfo() {
     setState(() {
-      BookingClientModel _contactModel = BookingClientModel(
-          id: clientForms.length,
-          mainContact: clientForms.isEmpty,
-          name: "Batatas");
+      BookingClientModel _contactModel =
+          BookingClientModel(id: 0, mainContact: clientForms.isEmpty);
 
       clientForms.add(ContactFormItemWidget(
         contactTitle: clientForms.isEmpty

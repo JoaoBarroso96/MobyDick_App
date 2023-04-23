@@ -14,18 +14,18 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: onTap,
       //onTap: (i) => setState(() => _currentIndex = i),
       items: [
-        /// Calendario
-        SalomonBottomBarItem(
-          icon: Icon(Icons.calendar_month_outlined),
-          title: Text("Agenda"),
-          selectedColor: Colors.pink,
-        ),
-
         /// Home
         SalomonBottomBarItem(
           icon: Icon(Icons.home),
           title: Text("Home"),
           selectedColor: Colors.purple,
+        ),
+
+        /// Calendario
+        SalomonBottomBarItem(
+          icon: Icon(Icons.calendar_month_outlined),
+          title: Text("Agenda"),
+          selectedColor: Colors.pink,
         ),
 
         /// Search

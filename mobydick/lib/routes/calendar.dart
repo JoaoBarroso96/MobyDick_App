@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/models/event_model.dart';
@@ -129,21 +130,23 @@ class _CalendarScreenState extends State<CalendarScreen>
                     _focusedDay = focusedDay;
                   },
                 ),
-                const SizedBox(height: 8.0),
-                Center(
-                  child: const Text(
-                    'Viagens',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 21,
-                      letterSpacing: 0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
-                  ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.07),
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.03,
+                          bottom: MediaQuery.of(context).size.height * 0.01),
+                      child: Text(
+                        "Viagens",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.title),
+                      ),
+                    )
+                  ],
                 ),
-                const SizedBox(height: 8.0),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Expanded(
                   child: ValueListenableBuilder<List<Event>>(
                     valueListenable: _selectedEvents,
@@ -157,60 +160,73 @@ class _CalendarScreenState extends State<CalendarScreen>
                               vertical: 4.0,
                             ),
                             decoration: BoxDecoration(
-                              color: calculateColor(value[index]),
-                              border: Border.all(),
-                              borderRadius: BorderRadius.circular(12.0),
+                              color: MobydickAppTheme.pallet5,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(2)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: MobydickAppTheme.dark_grey
+                                      .withOpacity(0.3),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: Offset(
+                                      2, 3), // changes position of shadow
+                                ),
+                              ],
                             ),
                             child: ListTile(
                               onTap: () => {
-                                /*Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => ViewBookingScreen(
-                                          tripId: value[index].pk)),
-                                )*/
-
                                 Navigator.pushNamed(context, 'tripDetails',
                                     arguments: {"id": value[index].pk})
                               },
                               title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: <Widget>[
-                                        Icon(Icons.timer_outlined),
+                                        Icon(
+                                          Icons.access_time,
+                                          color: MobydickAppTheme.pallet2,
+                                          size: 27.0,
+                                        ),
                                         Text(
-                                          ' ${value[index]}',
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontFamily:
-                                                MobydickAppTheme.fontName,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 15,
-                                            letterSpacing: -0.2,
-                                            color: MobydickAppTheme.darkText,
-                                          ),
+                                          "  ${value[index]}'",
+                                          textAlign: TextAlign.left,
+                                          style: GoogleFonts.lato(
+                                              textStyle:
+                                                  MobydickAppTheme.subtitle),
                                         ),
                                       ]),
-                                  const SizedBox(width: 8.0),
                                   Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: <Widget>[
-                                        Icon(Icons.person),
+                                        Icon(
+                                          Icons.person,
+                                          color: MobydickAppTheme.pallet2,
+                                          size: 27.0,
+                                        ),
                                         Text(
-                                          '${value[index].occupancy} de ${value[index].capacity}',
+                                          '(${value[index].occupancy}/${value[index].capacity})',
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontFamily:
-                                                MobydickAppTheme.fontName,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 15,
-                                            letterSpacing: -0.2,
-                                            color: MobydickAppTheme.darkText,
-                                          ),
+                                          style: GoogleFonts.lato(
+                                              textStyle:
+                                                  MobydickAppTheme.subtitle),
                                         ),
                                       ]),
+                                  IconButton(
+                                    iconSize: 27,
+                                    color: MobydickAppTheme.pallet2,
+                                    icon: const Icon(Icons.visibility),
+                                    onPressed: () => {
+                                      Navigator.pushNamed(
+                                          context, 'tripDetails',
+                                          arguments: {"id": value[index].pk})
+                                    },
+                                  ),
                                 ],
                               ),
                             ),

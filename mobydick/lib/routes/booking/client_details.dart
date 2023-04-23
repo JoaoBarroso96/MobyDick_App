@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
 import '../../mobydick_app_theme.dart';
@@ -34,29 +35,43 @@ class _BookingWidget extends State<BookingWidget> {
     bool paid = widget.tickets[0].paymentState != "none";
 
     return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+        vertical: MediaQuery.of(context).size.height * 0.01,
+      ),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 147, 220, 242),
-          borderRadius: BorderRadius.all(Radius.circular(9))),
-      margin: const EdgeInsets.all(10.0),
+        color: MobydickAppTheme.pallet5,
+        borderRadius: BorderRadius.all(Radius.circular(2)),
+        boxShadow: [
+          BoxShadow(
+            color: MobydickAppTheme.dark_grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: Offset(2, 3), // changes position of shadow
+          ),
+        ],
+      ),
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+          padding: EdgeInsets.fromLTRB(
+              MediaQuery.of(context).size.width * 0.03,
+              0,
+              MediaQuery.of(context).size.width * 0.03,
+              MediaQuery.of(context).size.height * 0.005),
           child: ExpandablePanel(
             header: HeaderWidget(
-                contact: widget.tickets[0].bookingClientModel.number.toString(),
+                numberClients: widget.tickets.length.toString(),
                 name: widget.tickets[0].bookingClientModel.name.toString(),
                 paid: paid),
             collapsed: Text(
-              "${widget.tickets.length} clientes",
-              softWrap: true,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+                widget.tickets[0].bookingClientModel.number.toString(),
+                style: GoogleFonts.lato(textStyle: MobydickAppTheme.body2)),
             expanded: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 FullBookingDetailsWidget(
                   ticket: widget.tickets[0],
                   onRefresh: widget.onRefresh,
+                  tripID: widget.tripID,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +117,57 @@ class _BookingWidget extends State<BookingWidget> {
                     ticket: item,
                     tripId: widget.tripID,
                     onRefresh: widget.onRefresh,
-                  )
+                  ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.03,
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.search,
+                          size: 19,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MobydickAppTheme.white, // background
+                          foregroundColor:
+                              MobydickAppTheme.pallet2, // foreground
+                        ),
+                        onPressed: () async {},
+                        label: Text(
+                          'Pagar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                              textStyle: MobydickAppTheme.body1),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.03,
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 19,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MobydickAppTheme.white, // background
+                          foregroundColor:
+                              MobydickAppTheme.pallet2, // foreground
+                        ),
+                        onPressed: () async {},
+                        label: Text(
+                          'Editar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                              textStyle: MobydickAppTheme.body1),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
             theme: const ExpandableThemeData(
@@ -117,11 +182,14 @@ class _BookingWidget extends State<BookingWidget> {
 
 class HeaderWidget extends StatelessWidget {
   HeaderWidget(
-      {Key? key, required this.name, required this.contact, required this.paid})
+      {Key? key,
+      required this.name,
+      required this.numberClients,
+      required this.paid})
       : super(key: key);
 
   final String name;
-  final String contact;
+  final String numberClients;
   final bool paid;
 
   @override
@@ -129,26 +197,23 @@ class HeaderWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(name,
-            style: const TextStyle(
-              fontFamily: MobydickAppTheme.fontName,
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-              letterSpacing: -0.2,
-              color: MobydickAppTheme.darkText,
-            )),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.3,
+          child: Text(
+            name,
+            style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
+          ),
+        ),
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Icon(Icons.call),
+          Icon(
+            Icons.person_add,
+            color: MobydickAppTheme.pallet2,
+            size: 27.0,
+          ),
           Text(
-            contact,
+            " $numberClients",
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: MobydickAppTheme.fontName,
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              letterSpacing: -0.2,
-              color: MobydickAppTheme.darkText,
-            ),
+            style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
           ),
         ]),
         Stack(
@@ -159,12 +224,12 @@ class HeaderWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Icon(
-                      Icons.euro_symbol,
-                      size: 15,
+                      Icons.check_circle_outline,
+                      size: 20,
                       color: MobydickAppTheme.tripLowOccupancy,
                     ),
                     Text(
-                      " Pago",
+                      " Checked-in",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: MobydickAppTheme.fontName,
@@ -183,19 +248,14 @@ class HeaderWidget extends StatelessWidget {
                   children: <Widget>[
                     Icon(
                       Icons.euro,
-                      size: 15,
+                      size: 20,
                       color: MobydickAppTheme.tripHighOccupancy,
                     ),
                     Text(
-                      " Por Pagar",
+                      " Pending",
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        letterSpacing: -0.2,
-                        color: MobydickAppTheme.tripHighOccupancy,
-                      ),
+                      style:
+                          GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                     ),
                   ]),
             )
@@ -208,10 +268,14 @@ class HeaderWidget extends StatelessWidget {
 
 class FullBookingDetailsWidget extends StatefulWidget {
   final Ticket ticket;
+  final int tripID;
   final Function() onRefresh;
 
   FullBookingDetailsWidget(
-      {Key? key, required this.ticket, required this.onRefresh})
+      {Key? key,
+      required this.ticket,
+      required this.onRefresh,
+      required this.tripID})
       : super(key: key);
   @override
   State createState() {
@@ -367,7 +431,7 @@ class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
                     splashColor: Colors.green,
                     onTap: () => Navigator.pushNamed(
                         context, 'createBooking', arguments: {
-                      "tripId": -1,
+                      "tripId": widget.tripID,
                       "bookingId": widget.ticket.bookingClientModel.bookingId
                     }),
                     child: Column(

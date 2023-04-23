@@ -70,10 +70,10 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
 
             switch (settings.name) {
               case '/1':
-                builder = (BuildContext _) => CalendarScreen();
+                builder = (BuildContext _) => HomeScreen();
                 break;
               case '/2':
-                builder = (BuildContext _) => HomeScreen();
+                builder = (BuildContext _) => CalendarScreen();
                 break;
               case '/3':
                 builder = (BuildContext _) => SearchPage();

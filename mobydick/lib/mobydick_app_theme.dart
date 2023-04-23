@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 class MobydickAppTheme {
   MobydickAppTheme._();
-  static const Color nearlyWhite = Color(0xFFFAFAFA);
-  static const Color white = Color(0xFFFFFFFF);
+
+  static const Color pallet1 = Color.fromARGB(255, 42, 51, 73);
+  static const Color pallet2 = Color.fromARGB(255, 86, 115, 148);
+  static const Color pallet3 = Color.fromARGB(255, 159, 171, 194);
+  static const Color pallet4 = Color.fromARGB(255, 200, 207, 220);
+  static const Color pallet5 = Color.fromARGB(255, 234, 241, 245);
+  static const Color white = /*Color.fromARGB(255, 246, 246, 245)*/ pallet5;
+  static const Color white1 = Color(0xFFFFFFFF);
+
   static const Color background = Color(0xFFF2F3F8);
   static const Color nearlyDarkBlue = Color(0xFF2633C5);
 
@@ -40,31 +47,35 @@ class MobydickAppTheme {
     fontSize: 36,
     letterSpacing: 0.4,
     height: 0.9,
-    color: darkerText,
+    color: pallet1,
   );
 
   static const TextStyle headline = TextStyle(
-    fontFamily: fontName,
     fontWeight: FontWeight.bold,
-    fontSize: 24,
+    fontSize: 31,
     letterSpacing: 0.27,
-    color: darkerText,
+    color: nearlyBlack,
+  );
+
+  static const TextStyle topTable = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 17,
+    letterSpacing: 0.27,
+    color: nearlyBlack,
   );
 
   static const TextStyle title = TextStyle(
-    fontFamily: fontName,
     fontWeight: FontWeight.bold,
-    fontSize: 16,
+    fontSize: 20,
     letterSpacing: 0.18,
-    color: darkerText,
+    color: pallet2,
   );
 
   static const TextStyle subtitle = TextStyle(
-    fontFamily: fontName,
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
-    letterSpacing: -0.04,
-    color: darkText,
+    fontWeight: FontWeight.w500,
+    fontSize: 21,
+    letterSpacing: 0.2,
+    color: nearlyBlack,
   );
 
   static const TextStyle body2 = TextStyle(
@@ -84,10 +95,9 @@ class MobydickAppTheme {
   );
 
   static const TextStyle caption = TextStyle(
-    fontFamily: fontName,
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: 21,
     letterSpacing: 0.2,
-    color: lightText, // was lightText
+    color: Colors.white, // was lightText
   );
 }

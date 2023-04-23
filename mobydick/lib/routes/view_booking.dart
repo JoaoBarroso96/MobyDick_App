@@ -73,7 +73,7 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
         builder: (BuildContext context, AsyncSnapshot<TripDetails> snapshot) {
           if (!snapshot.hasData) {
             return const SizedBox(
-              child: Text("da"),
+              child: Text(""),
             );
           } else {
             return Padding(

@@ -66,20 +66,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: Text("Home"),
                 ));
           } else {
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.1),
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: List.generate(
-                  snapshot.data!.length,
-                  (index) {
-                    return TripsView(
-                        tripsDay: snapshot
-                                .data![snapshot.data!.keys.toList()[index]] ??
-                            []);
-                  },
-                ),
+            return ListView(
+              scrollDirection: Axis.vertical,
+              children: List.generate(
+                snapshot.data!.length,
+                (index) {
+                  return TripsView(
+                      tripsDay:
+                          snapshot.data![snapshot.data!.keys.toList()[index]] ??
+                              []);
+                },
               ),
             );
           }

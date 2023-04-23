@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../mobydick_app_theme.dart';
 import 'package:mobydick/globals.dart' as globals;
@@ -10,29 +11,26 @@ class ApplicationToolbar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      bottomOpacity: 0.0,
+      elevation: 0.0,
       title: Text(
         title,
-        style: TextStyle(
-          fontFamily: MobydickAppTheme.fontName,
-          fontWeight: FontWeight.w500,
-          fontSize: 25,
-          letterSpacing: 0.5,
-        ),
+        style: GoogleFonts.quicksand(textStyle: MobydickAppTheme.headline),
       ),
       actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.search),
-          tooltip: 'Search Icon',
-          onPressed: () {},
-        ), //IconButton
+        Visibility(
+          visible: false,
+          child: IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search Icon',
+            onPressed: () {},
+          ),
+        )
+        //IconButton
       ], //<Widget>[]
-      backgroundColor: MobydickAppTheme.nearlyDarkBlue,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
-      ),
-      elevation: 5.0,
+      backgroundColor: MobydickAppTheme.pallet5,
       leading: IconButton(
+        color: MobydickAppTheme.pallet1,
         icon: const Icon(Icons.menu),
         tooltip: 'Menu Icon',
         onPressed: () {
