@@ -30,6 +30,14 @@ class _BookingWidget extends State<BookingWidget> {
     super.initState();
   }
 
+  BookingService bookingService = BookingService();
+
+  String dropdownvalue = 'Dinheiro';
+  var items = [
+    'Dinheiro',
+    'Transferência',
+  ];
+
   @override
   Widget build(BuildContext context) {
     bool paid = widget.tickets[0].paymentState != "none";
@@ -76,66 +84,146 @@ class _BookingWidget extends State<BookingWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Passageiro",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        letterSpacing: -0.2,
-                        color: MobydickAppTheme.darkText,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      child: Text(
+                        "Passageiro",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
                       ),
                     ),
-                    Text(
-                      "Contato",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        letterSpacing: -0.2,
-                        color: MobydickAppTheme.darkText,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.23,
+                      child: Text(
+                        "Contato",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
                       ),
                     ),
-                    Text(
-                      "Checkin",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: MobydickAppTheme.fontName,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        letterSpacing: -0.2,
-                        color: MobydickAppTheme.darkText,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.23,
+                      child: Text(
+                        "Checkin",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 for (var item in widget.tickets)
                   TicketRowWidget(
                     ticket: item,
                     tripId: widget.tripID,
                     onRefresh: widget.onRefresh,
                   ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                      width: MediaQuery.of(context).size.width * 0.40,
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: MediaQuery.of(context).size.width * 0.41,
                       child: ElevatedButton.icon(
                         icon: const Icon(
-                          Icons.search,
-                          size: 19,
+                          Icons.euro,
+                          size: 21,
                         ),
                         style: ElevatedButton.styleFrom(
+                          side: const BorderSide(
+                            width: 1.0,
+                            color: MobydickAppTheme.pallet2,
+                          ),
                           backgroundColor: MobydickAppTheme.white, // background
                           foregroundColor:
                               MobydickAppTheme.pallet2, // foreground
                         ),
-                        onPressed: () async {},
+                        onPressed: () {
+                          if (widget.tickets[0].paymentState != "none") {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                String contentText = "Content of Dialog";
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text("Método Pagamento"),
+                                      content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.13,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                                'Qual o método pagamento utilizado?'),
+                                            SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.02,
+                                            ),
+                                            DropdownButtonHideUnderline(
+                                              child: DropdownButton(
+                                                isExpanded: true,
+                                                // Initial Value
+                                                value: dropdownvalue,
+                                                // Down Arrow Icon
+                                                icon: const Icon(
+                                                    Icons.keyboard_arrow_down),
+                                                // Array list of items
+                                                items:
+                                                    items.map((String items) {
+                                                  return DropdownMenuItem(
+                                                    value: items,
+                                                    child: Text(items),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (String? value) {
+                                                  // This is called when the user selects an item.
+                                                  setState(() {
+                                                    dropdownvalue = value!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            int result = await onPayment(
+                                                context,
+                                                widget
+                                                    .tickets[0]
+                                                    .bookingClientModel
+                                                    .bookingId!
+                                                    .toString(),
+                                                dropdownvalue);
+
+                                            if (result == 0) {
+                                              //reload
+                                              widget.onRefresh();
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Change"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }
+                        },
                         label: Text(
                           'Pagar',
                           textAlign: TextAlign.center,
@@ -145,19 +233,33 @@ class _BookingWidget extends State<BookingWidget> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                      width: MediaQuery.of(context).size.width * 0.40,
+                        height: MediaQuery.of(context).size.height * 0.04,
+                        width: MediaQuery.of(context).size.width * 0.01),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: MediaQuery.of(context).size.width * 0.41,
                       child: ElevatedButton.icon(
                         icon: const Icon(
                           Icons.edit,
                           size: 19,
                         ),
                         style: ElevatedButton.styleFrom(
+                          side: const BorderSide(
+                            width: 1.0,
+                            color: MobydickAppTheme.pallet2,
+                          ),
+                          elevation: 3,
                           backgroundColor: MobydickAppTheme.white, // background
                           foregroundColor:
                               MobydickAppTheme.pallet2, // foreground
                         ),
-                        onPressed: () async {},
+                        onPressed: () => Navigator.pushNamed(
+                            context, 'createBooking',
+                            arguments: {
+                              "tripId": widget.tripID,
+                              "bookingId":
+                                  widget.tickets[0].bookingClientModel.bookingId
+                            }),
                         label: Text(
                           'Editar',
                           textAlign: TextAlign.center,
@@ -177,6 +279,16 @@ class _BookingWidget extends State<BookingWidget> {
             ),
           )),
     );
+  }
+
+  Future<int> onPayment(
+      BuildContext context, String bookingId, String method) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await bookingService.payment(bookingId, method);
+    pd.close();
+    return response;
   }
 }
 
@@ -285,13 +397,7 @@ class FullBookingDetailsWidget extends StatefulWidget {
 
 class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
   BookingService bookingService = BookingService();
-  String dropdownvalue = 'Dinheiro';
-  var items = [
-    'Dinheiro',
-    'Transferência',
-  ];
 
-  int test = 0;
   @override
   void initState() {
     super.initState();
@@ -311,275 +417,65 @@ class _FullBookingDetailsWidget extends State<FullBookingDetailsWidget> {
           children: [
             Row(
               children: [
-                Icon(Icons.mail),
-                Text(
-                  "Email: ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                Icon(
+                  Icons.mail,
+                  size: 23,
+                  color: MobydickAppTheme.pallet3,
                 ),
                 Text(
-                  widget.ticket.bookingClientModel.email.toString(),
+                  "  ${widget.ticket.bookingClientModel.email}",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                  style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                 ),
               ],
             ),
             Row(
               children: [
-                Icon(Icons.hotel),
-                Text(
-                  "Hotel: ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                Icon(
+                  Icons.hotel,
+                  size: 23,
+                  color: MobydickAppTheme.pallet3,
                 ),
                 Text(
-                  widget.ticket.bookingClientModel.hotel.toString(),
+                  "  ${widget.ticket.bookingClientModel.hotel}",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                  style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                 ),
               ],
             ),
             Row(
               children: [
-                Icon(Icons.flag),
-                Text(
-                  "Nacionalidade: ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                Icon(
+                  Icons.flag,
+                  size: 23,
+                  color: MobydickAppTheme.pallet3,
                 ),
                 Text(
-                  widget.ticket.bookingClientModel.nationality.toString(),
+                  "  ${widget.ticket.bookingClientModel.nationality}",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                  style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                 ),
               ],
             ),
             Row(
               children: [
-                Icon(Icons.ads_click),
-                Text(
-                  "Fonte: ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                Icon(
+                  Icons.ads_click,
+                  size: 23,
+                  color: MobydickAppTheme.pallet3,
                 ),
                 Text(
-                  widget.ticket.bookingClientModel.source.toString(),
+                  "  ${widget.ticket.bookingClientModel.source}",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
-                  ),
+                  style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                 ),
               ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02)
           ],
         ),
-        Row(
-          children: [
-            SizedBox.fromSize(
-              size: Size(56, 56),
-              child: ClipOval(
-                child: Material(
-                  color: Colors.amberAccent,
-                  child: InkWell(
-                    splashColor: Colors.green,
-                    onTap: () => Navigator.pushNamed(
-                        context, 'createBooking', arguments: {
-                      "tripId": widget.tripID,
-                      "bookingId": widget.ticket.bookingClientModel.bookingId
-                    }),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.edit), // <-- Icon
-                        Text(
-                          "Editar",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: MobydickAppTheme.fontName,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 11,
-                            letterSpacing: -0.2,
-                            color: MobydickAppTheme.darkText,
-                          ),
-                        ), // <-- Text
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.05,
-            ),
-            Visibility(
-              visible: widget.ticket.paymentState == "none",
-              child: SizedBox.fromSize(
-                size: Size(56, 56),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.amberAccent,
-                    child: InkWell(
-                      splashColor: Colors.green,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            String contentText = "Content of Dialog";
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return AlertDialog(
-                                  title: Text("Método Pagamento"),
-                                  content: Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.13,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                            'Qual o método pagamento utilizado?'),
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.02,
-                                        ),
-                                        DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                            isExpanded: true,
-                                            // Initial Value
-                                            value: dropdownvalue,
-                                            // Down Arrow Icon
-                                            icon: const Icon(
-                                                Icons.keyboard_arrow_down),
-                                            // Array list of items
-                                            items: items.map((String items) {
-                                              return DropdownMenuItem(
-                                                value: items,
-                                                child: Text(items),
-                                              );
-                                            }).toList(),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              setState(() {
-                                                dropdownvalue = value!;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text("Cancel"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        int result = await onPayment(
-                                            context,
-                                            widget.ticket.bookingClientModel
-                                                .bookingId!
-                                                .toString(),
-                                            dropdownvalue);
-
-                                        if (result == 0) {
-                                          //reload
-                                          widget.onRefresh();
-                                        }
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Change"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.euro), // <-- Icon
-                          Text(
-                            "Pagar",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontFamily: MobydickAppTheme.fontName,
-                              fontWeight: FontWeight.w200,
-                              fontSize: 11,
-                              letterSpacing: -0.2,
-                              color: MobydickAppTheme.darkText,
-                            ),
-                          ), // <-- Text
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
       ],
     );
-  }
-
-  Future<int> onPayment(
-      BuildContext context, String bookingId, String method) async {
-    ProgressDialog pd = ProgressDialog(context: context);
-    pd.show(msg: "Aguardando servidor");
-
-    int response = await bookingService.payment(bookingId, method);
-    pd.close();
-    return response;
   }
 }
 
@@ -598,7 +494,8 @@ class TicketRowWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 3, top: 10),
+        margin:
+            EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -608,129 +505,121 @@ class TicketRowWidget extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(children: <Widget>[
-                Icon(Icons.man),
-                Text(
-                  ticket.bookingClientModel.name.toString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                    color: MobydickAppTheme.darkText,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.3,
+                child: Row(children: <Widget>[
+                  Icon(Icons.man),
+                  Text(
+                    ticket.bookingClientModel.name.toString(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.lato(textStyle: MobydickAppTheme.body2),
                   ),
-                ),
-              ]),
-              Text(
-                ticket.bookingClientModel.number.toString(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: MobydickAppTheme.fontName,
-                  fontWeight: FontWeight.w100,
-                  fontSize: 15,
-                  letterSpacing: -0.2,
-                  color: MobydickAppTheme.darkText,
+                ]),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.23,
+                child: Text(
+                  ticket.bookingClientModel.number.toString(),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(textStyle: MobydickAppTheme.body2),
                 ),
               ),
-              Row(
-                children: [
-                  Stack(
+              SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Visibility(
-                        visible: ticket.state == "Pending",
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                String contentText = "Content of Dialog";
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return AlertDialog(
-                                      title: Text("Confirmar checkin"),
-                                      content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                      Stack(
+                        children: [
+                          Visibility(
+                            visible: ticket.state == "Pending",
+                            child: IconButton(
+                              onPressed: () async {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    String contentText = "Content of Dialog";
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: Text("Confirmar checkin"),
+                                          content: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.07,
-                                        child: Text(
-                                            'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}?'),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text("Não"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            int result = await onCheckin(
-                                              context,
-                                            );
-                                            if (result == 0) {
-                                              //reload
-                                              onRefresh();
-                                            }
+                                            child: Text(
+                                                'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}?'),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text("Não"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                int result = await onCheckin(
+                                                  context,
+                                                );
+                                                if (result == 0) {
+                                                  //reload
+                                                  onRefresh();
+                                                }
 
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Check-in"),
-                                        ),
-                                      ],
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Check-in"),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
                                 );
                               },
-                            );
-                          },
-                          icon: Icon(
-                            // <-- Icon
-                            Icons.check_circle_outline,
-                            size: 15.0,
-                          ),
-                          label: Text(
-                            'Efetuar',
-                            style: const TextStyle(
-                              fontFamily: MobydickAppTheme.fontName,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
-                              letterSpacing: -0.2,
+                              icon: Icon(
+                                // <-- Icon
+                                Icons.check_circle_outline,
+                                size: 21.0,
+                                color: MobydickAppTheme.pallet2,
+                              ),
+                              // <-- Text
                             ),
-                          ), // <-- Text
-                        ),
-                      ),
-                      Visibility(
-                        visible: ticket.state == "Checkin",
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Icon(
-                                Icons.check_box,
-                                size: 17,
-                                color: MobydickAppTheme.tripLowOccupancy,
-                              ),
-                              Text(
-                                " Realizado",
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontFamily: MobydickAppTheme.fontName,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16,
-                                  letterSpacing: -0.2,
-                                  color: MobydickAppTheme.tripLowOccupancy,
-                                ),
-                              ),
-                            ]),
+                          ),
+                          Visibility(
+                            visible: ticket.state == "Checkin",
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.check_box,
+                                    size: 17,
+                                    color: MobydickAppTheme.tripLowOccupancy,
+                                  ),
+                                  Text(
+                                    " Realizado",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: MobydickAppTheme.fontName,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 16,
+                                      letterSpacing: -0.2,
+                                      color: MobydickAppTheme.tripLowOccupancy,
+                                    ),
+                                  ),
+                                ]),
+                          )
+                        ],
                       )
                     ],
-                  )
-                ],
-              )
+                  )),
             ],
           ),
         ));
