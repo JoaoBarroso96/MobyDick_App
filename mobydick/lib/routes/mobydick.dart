@@ -4,6 +4,7 @@ import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/routes/home.dart';
 import 'package:mobydick/routes/login/login_page.dart';
 import 'package:mobydick/routes/search/search_page.dart';
+import 'package:mobydick/routes/stats/stats.dart';
 import 'package:mobydick/routes/ticket/rq_reader.dart';
 import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
@@ -67,7 +68,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
           key: _navigatorKey,
           onGenerateRoute: (RouteSettings settings) {
             WidgetBuilder builder;
-
+            print(settings.name);
             switch (settings.name) {
               case '/1':
                 builder = (BuildContext _) => HomeScreen();
@@ -79,7 +80,11 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 builder = (BuildContext _) => SearchPage();
                 break;
               case '/4':
-                builder = (BuildContext _) => QRReaderScreen();
+                builder = (BuildContext _) => StatsScreen();
+                //builder = (BuildContext _) => QRReaderScreen();
+                break;
+              case 'stats':
+                builder = (BuildContext _) => StatsScreen();
                 break;
               case 'createBooking':
                 Map arguments = settings.arguments as Map;
@@ -100,6 +105,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 break;
               default:
                 builder = (BuildContext _) => HomeScreen();
+                break;
               //throw Exception('Invalid route: ${settings.name}');
             }
 

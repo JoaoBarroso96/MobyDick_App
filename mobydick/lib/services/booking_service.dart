@@ -98,6 +98,27 @@ class BookingService {
     }
   }
 
+  Future<int> checkinAll(String booking) async {
+    try {
+      final response = await http.put(
+        Uri.parse("${globals.baseUrl}/booking/checkin/all/$booking"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"checkin": true}),
+      );
+      if (response.statusCode == 200) {
+        return 0;
+      } else {
+        return 1;
+      }
+    } on TimeoutException catch (_) {
+      return 2;
+    } on SocketException catch (_) {
+      return 2;
+    }
+  }
+
   Future<int> payment(
     String ref,
     String method,

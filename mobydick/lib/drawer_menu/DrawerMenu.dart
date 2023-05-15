@@ -31,7 +31,9 @@ class DrawerMenu extends StatelessWidget {
               'Houses',
               style: TextStyle(fontSize: 24.0),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, 'stats');
+            },
           ),
           ListTile(
             leading: const Icon(Icons.apartment),

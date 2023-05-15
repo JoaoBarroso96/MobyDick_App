@@ -29,14 +29,14 @@ class ApplicationToolbar extends StatelessWidget with PreferredSizeWidget {
         //IconButton
       ], //<Widget>[]
       backgroundColor: MobydickAppTheme.pallet5,
-      leading: IconButton(
+      /*leading: IconButton(
         color: MobydickAppTheme.pallet1,
         icon: const Icon(Icons.menu),
         tooltip: 'Menu Icon',
         onPressed: () {
           globals.key.currentState!.openDrawer();
         },
-      ),
+      ),*/
     );
   }
 

@@ -25,8 +25,10 @@ class BookingWidget extends StatefulWidget {
 }
 
 class _BookingWidget extends State<BookingWidget> {
+  bool allTicketCheck = false;
   @override
   void initState() {
+    allTicketCheck = allCheck();
     super.initState();
   }
 
@@ -69,7 +71,7 @@ class _BookingWidget extends State<BookingWidget> {
             header: HeaderWidget(
                 numberClients: widget.tickets.length.toString(),
                 name: widget.tickets[0].bookingClientModel.name.toString(),
-                paid: paid),
+                state: checkState(paid)),
             collapsed: Text(
                 widget.tickets[0].bookingClientModel.number.toString(),
                 style: GoogleFonts.lato(textStyle: MobydickAppTheme.body2)),
@@ -125,23 +127,27 @@ class _BookingWidget extends State<BookingWidget> {
                   children: [
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.41,
+                      width: MediaQuery.of(context).size.width * 0.27,
                       child: ElevatedButton.icon(
                         icon: const Icon(
                           Icons.euro,
-                          size: 21,
+                          size: 17,
                         ),
                         style: ElevatedButton.styleFrom(
                           side: const BorderSide(
                             width: 1.0,
                             color: MobydickAppTheme.pallet2,
                           ),
-                          backgroundColor: MobydickAppTheme.white, // background
+                          backgroundColor:
+                              widget.tickets[0].paymentState == "none"
+                                  ? MobydickAppTheme.white
+                                  : MobydickAppTheme
+                                      .dismissibleBackground, // background
                           foregroundColor:
                               MobydickAppTheme.pallet2, // foreground
                         ),
                         onPressed: () {
-                          if (widget.tickets[0].paymentState != "none") {
+                          if (widget.tickets[0].paymentState == "none") {
                             showDialog(
                               context: context,
                               builder: (context) {
@@ -228,20 +234,93 @@ class _BookingWidget extends State<BookingWidget> {
                           'Pagar',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.lato(
-                              textStyle: MobydickAppTheme.body1),
+                              textStyle: MobydickAppTheme.buttonBooking),
                         ),
                       ),
                     ),
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 0.04,
-                        width: MediaQuery.of(context).size.width * 0.01),
+                        width: MediaQuery.of(context).size.width * 0.005),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.41,
+                      width: MediaQuery.of(context).size.width * 0.27,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.check_circle_outline,
+                          size: 17,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          side: const BorderSide(
+                            width: 1.0,
+                            color: MobydickAppTheme.pallet2,
+                          ),
+                          backgroundColor: allTicketCheck
+                              ? MobydickAppTheme.dismissibleBackground
+                              : MobydickAppTheme.white, // background
+                          foregroundColor:
+                              MobydickAppTheme.pallet2, // foreground
+                        ),
+                        onPressed: () {
+                          if (!allTicketCheck) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text("Confirmar checkin"),
+                                      content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
+                                        child: Text(
+                                            'Deseja fazer checkin para todos passageiros desta reserva?'),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text("Não"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            int result = await onCheckin(
+                                                context,
+                                                widget
+                                                    .tickets[0]
+                                                    .bookingClientModel
+                                                    .bookingId!
+                                                    .toString());
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Check-in"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }
+                        },
+                        label: Text(
+                          'Checkin',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                              textStyle: MobydickAppTheme.buttonBooking),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                        width: MediaQuery.of(context).size.width * 0.005),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: MediaQuery.of(context).size.width * 0.27,
                       child: ElevatedButton.icon(
                         icon: const Icon(
                           Icons.edit,
-                          size: 19,
+                          size: 18,
                         ),
                         style: ElevatedButton.styleFrom(
                           side: const BorderSide(
@@ -249,22 +328,29 @@ class _BookingWidget extends State<BookingWidget> {
                             color: MobydickAppTheme.pallet2,
                           ),
                           elevation: 3,
-                          backgroundColor: MobydickAppTheme.white, // background
+                          backgroundColor:
+                              widget.tickets[0].paymentState == "none"
+                                  ? MobydickAppTheme.white
+                                  : MobydickAppTheme
+                                      .dismissibleBackground, // background
                           foregroundColor:
                               MobydickAppTheme.pallet2, // foreground
                         ),
-                        onPressed: () => Navigator.pushNamed(
-                            context, 'createBooking',
-                            arguments: {
-                              "tripId": widget.tripID,
-                              "bookingId":
-                                  widget.tickets[0].bookingClientModel.bookingId
-                            }),
+                        onPressed: () {
+                          if (widget.tickets[0].paymentState == "none") {
+                            Navigator.pushNamed(context, 'createBooking',
+                                arguments: {
+                                  "tripId": widget.tripID,
+                                  "bookingId": widget
+                                      .tickets[0].bookingClientModel.bookingId
+                                });
+                          }
+                        },
                         label: Text(
                           'Editar',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.lato(
-                              textStyle: MobydickAppTheme.body1),
+                              textStyle: MobydickAppTheme.buttonBooking),
                         ),
                       ),
                     ),
@@ -279,6 +365,57 @@ class _BookingWidget extends State<BookingWidget> {
             ),
           )),
     );
+  }
+
+  String checkState(bool paid) {
+    bool allCheckin = true;
+    for (Ticket t in widget.tickets) {
+      if (t.state != "Checkin") {
+        allCheckin = false;
+      }
+    }
+
+    if (paid) {
+      if (allCheckin) {
+        return "allcheckin";
+      } else {
+        return "pendingCheckin";
+      }
+    }
+
+    return "pendingPay";
+  }
+
+  bool allCheck() {
+    bool allCheckin = true;
+    for (Ticket t in widget.tickets) {
+      if (t.state != "Checkin") {
+        allCheckin = false;
+      }
+    }
+    return allCheckin;
+  }
+
+  Future<int> onCheckin(BuildContext context, String bookingId) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await bookingService.checkinAll(bookingId);
+
+    pd.close();
+    if (response == 0) {
+      setState(() {
+        allTicketCheck = true;
+        widget.tickets.forEach((element) {
+          element.state = "Checkin";
+        });
+        /*for (Ticket t in widget.tickets) {
+          t.state = "Checkin";
+        }*/
+      });
+    }
+
+    return response;
   }
 
   Future<int> onPayment(
@@ -297,12 +434,12 @@ class HeaderWidget extends StatelessWidget {
       {Key? key,
       required this.name,
       required this.numberClients,
-      required this.paid})
+      required this.state})
       : super(key: key);
 
   final String name;
   final String numberClients;
-  final bool paid;
+  final String state;
 
   @override
   Widget build(BuildContext context) {
@@ -331,7 +468,7 @@ class HeaderWidget extends StatelessWidget {
         Stack(
           children: [
             Visibility(
-              visible: paid,
+              visible: state == "allcheckin",
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -354,7 +491,7 @@ class HeaderWidget extends StatelessWidget {
                   ]),
             ),
             Visibility(
-              visible: !paid,
+              visible: state == "pendingPay",
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -362,6 +499,24 @@ class HeaderWidget extends StatelessWidget {
                       Icons.euro,
                       size: 20,
                       color: MobydickAppTheme.tripHighOccupancy,
+                    ),
+                    Text(
+                      " Pending",
+                      textAlign: TextAlign.center,
+                      style:
+                          GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
+                    ),
+                  ]),
+            ),
+            Visibility(
+              visible: state == "pendingCheckin",
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Icon(
+                      Icons.pending_actions_sharp,
+                      size: 20,
+                      color: MobydickAppTheme.capacityColor,
                     ),
                     Text(
                       " Pending",
@@ -538,83 +693,21 @@ class TicketRowWidget extends StatelessWidget {
                         children: [
                           Visibility(
                             visible: ticket.state == "Pending",
-                            child: IconButton(
-                              onPressed: () async {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    String contentText = "Content of Dialog";
-                                    return StatefulBuilder(
-                                      builder: (context, setState) {
-                                        return AlertDialog(
-                                          title: Text("Confirmar checkin"),
-                                          content: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.07,
-                                            child: Text(
-                                                'Deseja fazer checkin do passageiro ${ticket.bookingClientModel.name}?'),
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: Text("Não"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                int result = await onCheckin(
-                                                  context,
-                                                );
-                                                if (result == 0) {
-                                                  //reload
-                                                  onRefresh();
-                                                }
-
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("Check-in"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                              icon: Icon(
-                                // <-- Icon
-                                Icons.check_circle_outline,
-                                size: 21.0,
-                                color: MobydickAppTheme.pallet2,
-                              ),
-                              // <-- Text
+                            child: Icon(
+                              // <-- Icon
+                              Icons.cancel,
+                              size: 21.0,
+                              color: MobydickAppTheme.pallet2,
                             ),
                           ),
                           Visibility(
                             visible: ticket.state == "Checkin",
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.check_box,
-                                    size: 17,
-                                    color: MobydickAppTheme.tripLowOccupancy,
-                                  ),
-                                  Text(
-                                    " Realizado",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontFamily: MobydickAppTheme.fontName,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16,
-                                      letterSpacing: -0.2,
-                                      color: MobydickAppTheme.tripLowOccupancy,
-                                    ),
-                                  ),
-                                ]),
+                            child: Icon(
+                              // <-- Icon
+                              Icons.check_circle_outline,
+                              size: 21.0,
+                              color: MobydickAppTheme.paymentColor,
+                            ),
                           )
                         ],
                       )

@@ -23,13 +23,17 @@ class MobydickAppTheme {
   static const Color darkerText = Color(0xFF17262A);
   static const Color lightText = Color(0xFF4A6572);
   static const Color deactivatedText = Color(0xFF767676);
-  static const Color dismissibleBackground = Color(0xFF364A54);
+  static const Color dismissibleBackground = Color.fromARGB(255, 168, 166, 166);
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'Roboto';
 
-  static const Color tripLowOccupancy = Color.fromARGB(255, 6, 219, 131);
+  static const Color tripLowOccupancy = Color.fromARGB(255, 2, 202, 102);
   static const Color tripMediumOccupancy = Color.fromARGB(255, 250, 200, 61);
-  static const Color tripHighOccupancy = Color.fromARGB(255, 248, 69, 69);
+  static const Color tripHighOccupancy = Color.fromARGB(255, 212, 60, 60);
+
+  static const Color capacityColor = Color.fromARGB(255, 252, 171, 65);
+  static const Color checkinColor = Color.fromARGB(255, 22, 164, 247);
+  static const Color paymentColor = Color.fromARGB(255, 1, 151, 33);
 
   static const TextTheme textTheme = TextTheme(
     headline4: display1,
@@ -81,6 +85,14 @@ class MobydickAppTheme {
   static const TextStyle body2 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
+    fontSize: 14,
+    letterSpacing: 0.2,
+    color: darkText,
+  );
+
+  static const TextStyle buttonBooking = TextStyle(
+    fontFamily: fontName,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     letterSpacing: 0.2,
     color: darkText,

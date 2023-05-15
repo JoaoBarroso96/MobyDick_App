@@ -36,6 +36,25 @@ class TripService {
     }
   }
 
+  Future<int> cancelTrip(String tripId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse("${globals.baseUrl}/trips/delete/$tripId"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"checkin": true}),
+      );
+      if (response.statusCode == 200) {
+        return 0;
+      } else {
+        return 1;
+      }
+    } on TimeoutException catch (_) {
+      return 2;
+    }
+  }
+
   Future<LinkedHashMap<String, List<Event>>> fetchTripsInInterval(
       String startDay, String endDay) async {
     try {

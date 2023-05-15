@@ -52,6 +52,7 @@ dependencies:
   validators: ^3.0.0
   shared_preferences: ^2.1.0
   qr_code_scanner: ^1.0.1
+  fl_chart: ^0.62.0
 
 dev_dependencies:
   flutter_test:

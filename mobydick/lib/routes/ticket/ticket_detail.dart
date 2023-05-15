@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/app_bar/AppBar.dart';
 import 'package:mobydick/mobydick_app_theme.dart';
 import 'package:mobydick/models/ticket_model.dart';
@@ -112,26 +113,15 @@ class _TicketDetailPage extends State<TicketDetailPage> {
               child: Row(
                 children: [
                   Text(
-                    "Nome : ",
+                    "Nome: ",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
+                    style:
+                        GoogleFonts.lato(textStyle: MobydickAppTheme.topTable),
                   ),
                   Text(
                     widget.ticket.bookingClientModel.name.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.dark_grey,
-                    ),
+                    style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                   )
                 ],
               ),
@@ -145,26 +135,15 @@ class _TicketDetailPage extends State<TicketDetailPage> {
               child: Row(
                 children: [
                   Text(
-                    "Email : ",
+                    "Email: ",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
+                    style:
+                        GoogleFonts.lato(textStyle: MobydickAppTheme.topTable),
                   ),
                   Text(
                     widget.ticket.bookingClientModel.email.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.dark_grey,
-                    ),
+                    style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                   )
                 ],
               ),
@@ -178,26 +157,15 @@ class _TicketDetailPage extends State<TicketDetailPage> {
               child: Row(
                 children: [
                   Text(
-                    "Contacto : ",
+                    "Contacto: ",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
+                    style:
+                        GoogleFonts.lato(textStyle: MobydickAppTheme.topTable),
                   ),
                   Text(
                     widget.ticket.bookingClientModel.number.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.dark_grey,
-                    ),
+                    style: GoogleFonts.lato(textStyle: MobydickAppTheme.body1),
                   )
                 ],
               ),
@@ -287,7 +255,6 @@ class _TicketDetailPage extends State<TicketDetailPage> {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          String contentText = "Content of Dialog";
                           return StatefulBuilder(
                             builder: (context, setState) {
                               return AlertDialog(

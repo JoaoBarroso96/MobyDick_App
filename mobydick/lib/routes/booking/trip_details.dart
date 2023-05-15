@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobydick/services/trips_service.dart';
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 import '../../mobydick_app_theme.dart';
 import '../../models/ticket_model.dart';
 import '../../models/trip_details_model.dart';
 import 'package:intl/intl.dart';
 
-class TripDetailsWidget extends StatelessWidget {
+import '../trip/trip_chart.dart';
+
+class TripDetailsWidget extends StatefulWidget {
   TripDetailsWidget({Key? key, required this.tripDetails}) : super(key: key);
 
   final TripDetails tripDetails;
+  final state = _TripDetailsWidget();
 
+  @override
+  State<StatefulWidget> createState() {
+    return state;
+  }
+}
+
+class _TripDetailsWidget extends State<TripDetailsWidget> {
+  TripService tripService = TripService();
   @override
   Widget build(BuildContext context) {
     Intl.defaultLocale = 'pt';
-    List<int> countTicket = countPaymentsAndCheckin(tripDetails.tickets);
-    String capacity = "${countTicket[2]}/${tripDetails.capacity}";
+    List<int> countTicket = countPaymentsAndCheckin(widget.tripDetails.tickets);
+    String capacity = "${countTicket[2]}/${widget.tripDetails.capacity}";
     String paymentStats = "${countTicket[1]}/${countTicket[2]}";
     String checkinStats = "${countTicket[0]}/${countTicket[2]}";
     String day = capitalize(
-        DateFormat('EEEE, d MMMM, yyyy').format(tripDetails.departure));
+        DateFormat('EEEE, d MMMM, yyyy').format(widget.tripDetails.departure));
     return Column(
       children: [
         Row(
@@ -51,192 +64,200 @@ class TripDetailsWidget extends StatelessWidget {
             )
           ],
         ),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
         Container(
-          width: MediaQuery.of(context).size.height * 0.15,
-          height: MediaQuery.of(context).size.height * 0.15,
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.23,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(50.0)),
-            border: Border.all(
-              color: MobydickAppTheme.nearlyBlue,
-              width: 4.0,
-            ),
+            color: MobydickAppTheme.pallet5,
+            borderRadius: BorderRadius.all(Radius.circular(3.0)),
+            boxShadow: [
+              BoxShadow(
+                color: MobydickAppTheme.dark_grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 5,
+                offset: Offset(2, 3), // changes position of shadow
+              ),
+            ],
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.person,
-                size: 27,
-              ),
-              Text(
-                "Lotação",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: MobydickAppTheme.fontName,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  letterSpacing: -0.2,
-                  color: MobydickAppTheme.darkText,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.03,
+                    top: MediaQuery.of(context).size.height * 0.01),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.28,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Capacidade",
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
+                      ),
+                      Text(
+                        capacity,
+                        style: GoogleFonts.quicksand(
+                            textStyle: const TextStyle(
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          letterSpacing: -0.05,
+                          color: MobydickAppTheme.capacityColor,
+                        )),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.02,
+                      ),
+                      Text(
+                        "Pagos",
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
+                      ),
+                      Text(
+                        paymentStats,
+                        style: GoogleFonts.quicksand(
+                            textStyle: const TextStyle(
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          letterSpacing: -0.05,
+                          color: MobydickAppTheme.paymentColor,
+                        )),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.02,
+                      ),
+                      Text(
+                        "Checkin",
+                        style: GoogleFonts.quicksand(
+                            textStyle: MobydickAppTheme.topTable),
+                      ),
+                      Text(
+                        checkinStats,
+                        style: GoogleFonts.quicksand(
+                            textStyle: const TextStyle(
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          letterSpacing: -0.05,
+                          color: MobydickAppTheme.checkinColor,
+                        )),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Text(
-                capacity,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: MobydickAppTheme.fontName,
-                  fontWeight: FontWeight.w300,
-                  fontSize: 13,
-                  letterSpacing: -0.2,
-                  color: MobydickAppTheme.darkText,
-                ),
+              TripChart(
+                capacity: countTicket[2],
+                payment: countTicket[1],
+                checkin: countTicket[0],
+                max: widget.tripDetails.capacity,
               ),
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.height * 0.15,
-              height: MediaQuery.of(context).size.height * 0.15,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                border: Border.all(
-                  color: MobydickAppTheme.nearlyBlue,
-                  width: 4.0,
+        Padding(
+          padding:
+              EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.05),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Visibility(
+                visible: widget.tripDetails.state != "Cancel",
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.45,
+                  child: ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            MobydickAppTheme.tripHighOccupancy)),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: Text("Cancelar Viagem"),
+                                content: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.07,
+                                  child: Text(
+                                      'Deseja cancelar a viagem? Todos passageiros serão notificados'),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text("Não"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      int result = await cancelTrip(
+                                          context, widget.tripDetails.pk);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Sim"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      // <-- Icon
+                      Icons.cancel_outlined,
+                      size: 17.0,
+                    ),
+                    label: Text(
+                      'Cancelar Viagem',
+                      style: const TextStyle(
+                        fontFamily: MobydickAppTheme.fontName,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        letterSpacing: -0.2,
+                      ),
+                    ), // <-- Text
+                  ),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.euro,
-                    size: 27,
-                  ),
-                  Text(
-                    "Pagam.",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
+              Visibility(
+                visible: widget.tripDetails.state != "Cancel",
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.45,
+                  child: ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            MobydickAppTheme.tripLowOccupancy)),
+                    onPressed: () => Navigator.pushNamed(
+                        context, 'createBooking', arguments: {
+                      "tripId": widget.tripDetails.pk,
+                      "bookingId": -1
+                    }),
+                    icon: Icon(
+                      // <-- Icon
+                      Icons.add,
+                      size: 17.0,
                     ),
+                    label: Text(
+                      'Adicionar Reserva',
+                      style: const TextStyle(
+                        fontFamily: MobydickAppTheme.fontName,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        letterSpacing: -0.2,
+                      ),
+                    ), // <-- Text
                   ),
-                  Text(
-                    paymentStats,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 13,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-            Container(
-              width: MediaQuery.of(context).size.height * 0.15,
-              height: MediaQuery.of(context).size.height * 0.15,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                border: Border.all(
-                  color: MobydickAppTheme.nearlyBlue,
-                  width: 4.0,
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.check_circle_outline,
-                    size: 27,
-                  ),
-                  Text(
-                    "Checkin",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
-                  ),
-                  Text(
-                    checkinStats,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: MobydickAppTheme.fontName,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 13,
-                      letterSpacing: -0.2,
-                      color: MobydickAppTheme.darkText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Visibility(
-              visible: tripDetails.state != "Cancel",
-              child: ElevatedButton.icon(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        MobydickAppTheme.tripHighOccupancy)),
-                onPressed: () {},
-                icon: Icon(
-                  // <-- Icon
-                  Icons.cancel_outlined,
-                  size: 17.0,
-                ),
-                label: Text(
-                  'Cancelar Viagem',
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                  ),
-                ), // <-- Text
-              ),
-            ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-            Visibility(
-              visible: tripDetails.state != "Cancel",
-              child: ElevatedButton.icon(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        MobydickAppTheme.tripLowOccupancy)),
-                onPressed: () => Navigator.pushNamed(context, 'createBooking',
-                    arguments: {"tripId": tripDetails.pk, "bookingId": -1}),
-                icon: Icon(
-                  // <-- Icon
-                  Icons.add,
-                  size: 17.0,
-                ),
-                label: Text(
-                  'Adicionar Reserva',
-                  style: const TextStyle(
-                    fontFamily: MobydickAppTheme.fontName,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15,
-                    letterSpacing: -0.2,
-                  ),
-                ), // <-- Text
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.03),
         Row(
@@ -255,6 +276,22 @@ class TripDetailsWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<int> cancelTrip(BuildContext context, int tripID) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(msg: "Aguardando servidor");
+
+    int response = await tripService.cancelTrip(tripID.toString());
+
+    pd.close();
+    if (response == 0) {
+      setState(() {
+        widget.tripDetails.state = "Cancel";
+      });
+    }
+
+    return response;
   }
 }
 
