@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 class MobydickAppTheme {
   MobydickAppTheme._();
 
+  static const List<Color> statsColers = [
+    Color.fromARGB(255, 253, 128, 111),
+    Color.fromARGB(255, 178, 224, 97),
+    Color.fromARGB(255, 126, 175, 213),
+    Color.fromARGB(255, 189, 126, 190),
+    Color.fromARGB(255, 255, 181, 90),
+    Color.fromARGB(255, 255, 238, 101),
+    Color.fromARGB(255, 190, 185, 219),
+    Color.fromARGB(255, 253, 204, 229),
+    Color.fromARGB(255, 139, 211, 199)
+  ];
+
   static const Color pallet1 = Color.fromARGB(255, 42, 51, 73);
   static const Color pallet2 = Color.fromARGB(255, 86, 115, 148);
   static const Color pallet3 = Color.fromARGB(255, 159, 171, 194);

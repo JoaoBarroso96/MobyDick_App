@@ -1,30 +1,39 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:mobydick/routes/stats/indicator.dart';
 
 import '../../mobydick_app_theme.dart';
 
 class PieChartSource extends StatefulWidget {
-  const PieChartSource({super.key});
+  Map<String, int> sources;
+  PieChartSource({Key? key, required this.sources}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => PieChart2State();
 }
 
-class PieChart2State extends State {
+class PieChart2State extends State<PieChartSource> {
   int touchedIndex = -1;
+
+  @override
+  void initState() {
+    setState(() {});
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.3,
-      child: Row(
+      aspectRatio: 1.1,
+      child: Column(
         children: <Widget>[
-          const SizedBox(
-            height: 18,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.07,
           ),
           Expanded(
             child: AspectRatio(
-              aspectRatio: 1,
+              aspectRatio: 1.5,
               child: PieChart(
                 PieChartData(
                   pieTouchData: PieTouchData(
@@ -51,30 +60,25 @@ class PieChart2State extends State {
               ),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const <Widget>[
-              Text("este"),
-              SizedBox(
-                height: 4,
-              ),
-              Text("este"),
-              SizedBox(
-                height: 4,
-              ),
-              Text("este"),
-              SizedBox(
-                height: 4,
-              ),
-              Text("este"),
-              SizedBox(
-                height: 18,
-              ),
-            ],
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.03,
           ),
-          const SizedBox(
-            width: 28,
+          Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(widget.sources.keys.length, (i) {
+                return Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.02,
+                        bottom: MediaQuery.of(context).size.height * 0.02),
+                    child: Indicator(
+                      color: MobydickAppTheme.statsColers[i],
+                      text: widget.sources.keys.toList()[i],
+                      isSquare: true,
+                    ));
+              })),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
           ),
         ],
       ),
@@ -82,67 +86,35 @@ class PieChart2State extends State {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+    return List.generate(widget.sources.keys.length, (i) {
+      int max = 0;
+      for (var k in widget.sources.keys) {
+        max += widget.sources[k]!;
+      }
+      String key = widget.sources.keys.toList()[i];
+      double value = widget.sources[key]! * 100 / max;
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Colors.blue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: MobydickAppTheme.pallet2,
-              shadows: shadows,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.yellow,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: MobydickAppTheme.pallet2,
-              shadows: shadows,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.purple,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: MobydickAppTheme.pallet2,
-              shadows: shadows,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.orange,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: MobydickAppTheme.pallet2,
-              shadows: shadows,
-            ),
-          );
-        default:
-          throw Error();
+      if (key == "Recomendação de amigo") {
+        key = "Rec. Amigo";
       }
+
+      int percent = value.round();
+
+      return PieChartSectionData(
+        color: MobydickAppTheme.statsColers[i],
+        value: value,
+        title: "$percent.%",
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: MobydickAppTheme.white1,
+          shadows: shadows,
+        ),
+      );
     });
   }
 }

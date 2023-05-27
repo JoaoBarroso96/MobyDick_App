@@ -80,6 +80,9 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 builder = (BuildContext _) => SearchPage();
                 break;
               case '/4':
+                builder = (BuildContext _) => QRReaderScreen();
+                break;
+              case '/5':
                 builder = (BuildContext _) => StatsScreen();
                 //builder = (BuildContext _) => QRReaderScreen();
                 break;

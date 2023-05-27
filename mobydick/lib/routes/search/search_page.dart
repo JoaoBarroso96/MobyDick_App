@@ -205,7 +205,6 @@ class _SearchPage extends State<SearchPage> {
   }
 
   Future<int> onSearch() async {
-    print(searchterm);
     List<Ticket> temp = await ticketService.searchTickets(searchterm);
     setState(() {
       search = true;
