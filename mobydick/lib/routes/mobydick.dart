@@ -63,7 +63,7 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
           },
         ),
         drawer: DrawerMenu(),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         body: Navigator(
           key: _navigatorKey,
           onGenerateRoute: (RouteSettings settings) {

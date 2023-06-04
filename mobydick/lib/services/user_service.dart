@@ -21,8 +21,8 @@ class UserService {
         print(body["token"]);
         if (!body["error"]) {
           final prefs = await SharedPreferences.getInstance();
-          print(body["token"]);
           await prefs.setString('token', body["token"]);
+          await prefs.setString('firstname', body["firstname"]);
           return true;
         }
 

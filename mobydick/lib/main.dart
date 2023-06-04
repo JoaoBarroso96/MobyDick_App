@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      home: MobydickHomeScreen() /*LoginScreen()*/,
+      home: /*MobydickHomeScreen()*/ LoginScreen(),
     );
   }
 }

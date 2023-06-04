@@ -11,6 +11,11 @@ import '../models/trip_details_model.dart';
 
 class TripService {
   Future<Map<String, List<Trip>>> fetchTripsByDay() async {
+    Future.delayed(Duration(seconds: 2), () {
+      // Code to be executed after the delay
+      print('Task completed');
+    });
+
     try {
       var response = await http.get(Uri.parse("${globals.baseUrl}/trips"));
       if (response.statusCode == 200) {

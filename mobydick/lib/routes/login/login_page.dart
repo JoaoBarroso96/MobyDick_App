@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/routes/mobydick.dart';
 import 'package:mobydick/services/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:validators/validators.dart';
+
+import '../../mobydick_app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -23,9 +26,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    _checkKeyExists();
+
     setState(() {});
 
     super.initState();
+  }
+
+  Future<void> _checkKeyExists() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool keyExists = prefs.containsKey('token');
+    print(keyExists);
+    if (keyExists) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MobydickHomeScreen()),
+          (Route<dynamic> route) => false);
+    }
   }
 
   bool isEmailCorrect = false;
@@ -43,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
             image: DecorationImage(
                 image: AssetImage('assets/images/background.png'),
                 fit: BoxFit.cover,
-                opacity: 0.3)),
+                opacity: 1)),
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -71,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Please login to continue using our app',
                     style: GoogleFonts.indieFlower(
                       textStyle: TextStyle(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withOpacity(0.8),
                           fontWeight: FontWeight.w300,
                           // height: 1.5,
                           fontSize: 15),
@@ -114,13 +132,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       BorderRadius.all(Radius.circular(10))),
                               prefixIcon: Icon(
                                 Icons.person,
-                                color: Colors.purple,
+                                color: MobydickAppTheme.pallet2,
                               ),
                               filled: true,
                               fillColor: Colors.white,
                               labelText: "Email",
                               hintText: 'your-email@domain.com',
-                              labelStyle: TextStyle(color: Colors.purple),
+                              labelStyle:
+                                  TextStyle(color: MobydickAppTheme.pallet2),
                               // suffixIcon: IconButton(
                               //     onPressed: () {},
                               //     icon: Icon(Icons.close,
@@ -148,13 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         BorderRadius.all(Radius.circular(10))),
                                 prefixIcon: Icon(
                                   Icons.person,
-                                  color: Colors.purple,
+                                  color: MobydickAppTheme.pallet2,
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 labelText: "Password",
                                 hintText: '*********',
-                                labelStyle: TextStyle(color: Colors.purple),
+                                labelStyle:
+                                    TextStyle(color: MobydickAppTheme.pallet2),
                               ),
                               validator: (value) {
                                 if (value!.isEmpty && value!.length < 5) {
@@ -178,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             BorderRadius.circular(10.0)),
                                     backgroundColor: isEmailCorrect == false
                                         ? Colors.red
-                                        : Colors.purple,
+                                        : MobydickAppTheme.pallet2,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 131, vertical: 20)
                                     // padding: EdgeInsets.only(
@@ -207,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   //
-                  Row(
+                  /*Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -226,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       )
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),

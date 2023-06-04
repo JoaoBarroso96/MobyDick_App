@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
 
 import '../models/trip_model.dart';
+import 'loading/loading.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -59,24 +61,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         builder: (BuildContext context,
             AsyncSnapshot<Map<String, List<Trip>>> snapshot) {
           if (!snapshot.hasData) {
-            return Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height * 0.1),
-                child: const SizedBox(
-                  child: Text("Home"),
-                ));
+            return Loading();
           } else {
-            return ListView(
-              scrollDirection: Axis.vertical,
-              children: List.generate(
-                snapshot.data!.length,
-                (index) {
-                  return TripsView(
-                      tripsDay:
-                          snapshot.data![snapshot.data!.keys.toList()[index]] ??
-                              []);
-                },
-              ),
+            return Stack(
+              children: [
+                Visibility(
+                    visible: snapshot.data!.isNotEmpty,
+                    child: ListView(
+                      scrollDirection: Axis.vertical,
+                      children: List.generate(
+                        snapshot.data!.length,
+                        (index) {
+                          return TripsView(
+                              tripsDay: snapshot.data![
+                                      snapshot.data!.keys.toList()[index]] ??
+                                  []);
+                        },
+                      ),
+                    )),
+                Visibility(
+                    visible: snapshot.data!.isEmpty,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.05),
+                        Center(
+                          child: Text(
+                            "Sem Viagens",
+                            textAlign: TextAlign.left,
+                            style: GoogleFonts.quicksand(
+                                textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 27,
+                              letterSpacing: 0.18,
+                              color: MobydickAppTheme.pallet2,
+                            )),
+                          ),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.05),
+                        Icon(
+                          Icons.no_accounts,
+                          color: MobydickAppTheme.pallet2,
+                          size: 150.0,
+                        ),
+                      ],
+                    ))
+              ],
             );
           }
         },

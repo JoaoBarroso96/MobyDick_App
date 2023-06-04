@@ -13,6 +13,7 @@ import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
 
 import '../models/trip_model.dart';
+import 'loading/loading.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -94,7 +95,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           : MobydickAppTheme.nearlyBlack,
       body: Stack(
         children: [
-          Visibility(visible: !pageReady, child: Text("Carregando")),
+          Visibility(visible: !pageReady, child: Loading()),
           Visibility(
             visible: pageReady,
             child: Padding(

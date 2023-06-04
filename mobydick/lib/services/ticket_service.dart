@@ -34,11 +34,12 @@ class TicketService {
   Future<Ticket> getTicket(String ref) async {
     try {
       final response = await http.get(
-        Uri.parse("${globals.baseUrl}ticket/get/$ref"),
+        Uri.parse("${globals.baseUrl}/ticket/get/$ref"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+
       if (response.statusCode == 200) {
         Ticket ticket =
             Ticket.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));

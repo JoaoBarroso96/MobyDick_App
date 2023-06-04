@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobydick/models/ticket_model.dart';
+import 'package:mobydick/routes/loading/loading.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../app_bar/AppBar.dart';
 import '../mobydick_app_theme.dart';
@@ -55,8 +56,8 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
 
   @override
   void dispose() {
-    animationController?.dispose();
-    dispose();
+    /*animationController?.dispose();
+    dispose();*/
   }
 
   @override
@@ -72,9 +73,7 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
         future: futureTripDetails,
         builder: (BuildContext context, AsyncSnapshot<TripDetails> snapshot) {
           if (!snapshot.hasData) {
-            return const SizedBox(
-              child: Text(""),
-            );
+            return Loading();
           } else {
             return Padding(
               padding: EdgeInsets.only(
