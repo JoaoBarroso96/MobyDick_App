@@ -35,6 +35,24 @@ class _TripDetailsWidget extends State<TripDetailsWidget> {
         DateFormat('EEEE, d MMMM, yyyy').format(widget.tripDetails.departure));
     return Column(
       children: [
+        Visibility(
+            visible: widget.tripDetails.state == "cancel",
+            child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.1),
+                child: Row(children: [
+                  Icon(
+                    Icons.access_time,
+                    color: MobydickAppTheme.pallet2,
+                    size: 27.0,
+                  ),
+                  Text(
+                    "  Viagem Cancelada",
+                    textAlign: TextAlign.left,
+                    style:
+                        GoogleFonts.lato(textStyle: MobydickAppTheme.subtitle),
+                  ),
+                ]))),
         Row(
           children: [
             Padding(
@@ -168,7 +186,7 @@ class _TripDetailsWidget extends State<TripDetailsWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Visibility(
-                visible: widget.tripDetails.state != "Cancel",
+                visible: widget.tripDetails.state != "cancel",
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   child: ElevatedButton.icon(
@@ -227,7 +245,7 @@ class _TripDetailsWidget extends State<TripDetailsWidget> {
                 ),
               ),
               Visibility(
-                visible: widget.tripDetails.state != "Cancel",
+                visible: widget.tripDetails.state != "cancel",
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   child: ElevatedButton.icon(
