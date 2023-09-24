@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/app_bar/AppBar.dart';
 import 'package:mobydick/mobydick_app_theme.dart';
-import 'package:mobydick/routes/mobydick.dart';
 import 'package:mobydick/services/ticket_service.dart';
-import 'package:mobydick/services/user_service.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../../drawer_menu/DrawerMenu.dart';
 import '../../models/ticket_model.dart';
 
 class QRReaderScreen extends StatefulWidget {
@@ -39,6 +37,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      drawer: DrawerMenu(),
       appBar: ApplicationToolbar(title: "QRCode"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white

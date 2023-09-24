@@ -11,11 +11,13 @@ import '../../services/booking_service.dart';
 class BookingWidget extends StatefulWidget {
   final List<Ticket> tickets;
   final int tripID;
+  final bool tripCancel;
   final Function() onRefresh;
   BookingWidget(
       {Key? key,
       required this.tickets,
       required this.tripID,
+      required this.tripCancel,
       required this.onRefresh})
       : super(key: key);
   @override
@@ -122,240 +124,244 @@ class _BookingWidget extends State<BookingWidget> {
                     tripId: widget.tripID,
                     onRefresh: widget.onRefresh,
                   ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.27,
-                      child: ElevatedButton.icon(
-                        icon: const Icon(
-                          Icons.euro,
-                          size: 17,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          side: const BorderSide(
-                            width: 1.0,
-                            color: MobydickAppTheme.pallet2,
-                          ),
-                          backgroundColor:
-                              widget.tickets[0].paymentState == "none"
-                                  ? MobydickAppTheme.white
-                                  : MobydickAppTheme
-                                      .dismissibleBackground, // background
-                          foregroundColor:
-                              MobydickAppTheme.pallet2, // foreground
-                        ),
-                        onPressed: () {
-                          if (widget.tickets[0].paymentState == "none") {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                String contentText = "Content of Dialog";
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return AlertDialog(
-                                      title: Text("Método Pagamento"),
-                                      content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                Visibility(
+                    visible: !widget.tripCancel,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          width: MediaQuery.of(context).size.width * 0.27,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.euro,
+                              size: 17,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              side: const BorderSide(
+                                width: 1.0,
+                                color: MobydickAppTheme.pallet2,
+                              ),
+                              backgroundColor:
+                                  widget.tickets[0].paymentState == "none"
+                                      ? MobydickAppTheme.white
+                                      : MobydickAppTheme
+                                          .dismissibleBackground, // background
+                              foregroundColor:
+                                  MobydickAppTheme.pallet2, // foreground
+                            ),
+                            onPressed: () {
+                              if (widget.tickets[0].paymentState == "none") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    String contentText = "Content of Dialog";
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: Text("Método Pagamento"),
+                                          content: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.13,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                                'Qual o método pagamento utilizado?'),
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.02,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                    'Qual o método pagamento utilizado?'),
+                                                SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.02,
+                                                ),
+                                                DropdownButtonHideUnderline(
+                                                  child: DropdownButton(
+                                                    isExpanded: true,
+                                                    // Initial Value
+                                                    value: dropdownvalue,
+                                                    // Down Arrow Icon
+                                                    icon: const Icon(Icons
+                                                        .keyboard_arrow_down),
+                                                    // Array list of items
+                                                    items: items
+                                                        .map((String items) {
+                                                      return DropdownMenuItem(
+                                                        value: items,
+                                                        child: Text(items),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: (String? value) {
+                                                      // This is called when the user selects an item.
+                                                      setState(() {
+                                                        dropdownvalue = value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                isExpanded: true,
-                                                // Initial Value
-                                                value: dropdownvalue,
-                                                // Down Arrow Icon
-                                                icon: const Icon(
-                                                    Icons.keyboard_arrow_down),
-                                                // Array list of items
-                                                items:
-                                                    items.map((String items) {
-                                                  return DropdownMenuItem(
-                                                    value: items,
-                                                    child: Text(items),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? value) {
-                                                  // This is called when the user selects an item.
-                                                  setState(() {
-                                                    dropdownvalue = value!;
-                                                  });
-                                                },
-                                              ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text("Cancel"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                int result = await onPayment(
+                                                    context,
+                                                    widget
+                                                        .tickets[0]
+                                                        .bookingClientModel
+                                                        .bookingId!
+                                                        .toString(),
+                                                    dropdownvalue);
+
+                                                if (result == 0) {
+                                                  //reload
+                                                  widget.onRefresh();
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Change"),
                                             ),
                                           ],
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text("Cancel"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            int result = await onPayment(
-                                                context,
-                                                widget
-                                                    .tickets[0]
-                                                    .bookingClientModel
-                                                    .bookingId!
-                                                    .toString(),
-                                                dropdownvalue);
-
-                                            if (result == 0) {
-                                              //reload
-                                              widget.onRefresh();
-                                            }
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Change"),
-                                        ),
-                                      ],
+                                        );
+                                      },
                                     );
                                   },
                                 );
-                              },
-                            );
-                          }
-                        },
-                        label: Text(
-                          'Pagar',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                              textStyle: MobydickAppTheme.buttonBooking),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        width: MediaQuery.of(context).size.width * 0.005),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.27,
-                      child: ElevatedButton.icon(
-                        icon: const Icon(
-                          Icons.check_circle_outline,
-                          size: 17,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          side: const BorderSide(
-                            width: 1.0,
-                            color: MobydickAppTheme.pallet2,
+                              }
+                            },
+                            label: Text(
+                              'Pagar',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                  textStyle: MobydickAppTheme.buttonBooking),
+                            ),
                           ),
-                          backgroundColor: allTicketCheck
-                              ? MobydickAppTheme.dismissibleBackground
-                              : MobydickAppTheme.white, // background
-                          foregroundColor:
-                              MobydickAppTheme.pallet2, // foreground
                         ),
-                        onPressed: () {
-                          if (!allTicketCheck) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return AlertDialog(
-                                      title: Text("Confirmar checkin"),
-                                      content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.04,
+                            width: MediaQuery.of(context).size.width * 0.005),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          width: MediaQuery.of(context).size.width * 0.27,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.check_circle_outline,
+                              size: 17,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              side: const BorderSide(
+                                width: 1.0,
+                                color: MobydickAppTheme.pallet2,
+                              ),
+                              backgroundColor: allTicketCheck
+                                  ? MobydickAppTheme.dismissibleBackground
+                                  : MobydickAppTheme.white, // background
+                              foregroundColor:
+                                  MobydickAppTheme.pallet2, // foreground
+                            ),
+                            onPressed: () {
+                              if (!allTicketCheck) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: Text("Confirmar checkin"),
+                                          content: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.07,
-                                        child: Text(
-                                            'Deseja fazer checkin para todos passageiros desta reserva?'),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text("Não"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            int result = await onCheckin(
-                                                context,
-                                                widget
-                                                    .tickets[0]
-                                                    .bookingClientModel
-                                                    .bookingId!
-                                                    .toString());
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Check-in"),
-                                        ),
-                                      ],
+                                            child: Text(
+                                                'Deseja fazer checkin para todos passageiros desta reserva?'),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text("Não"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                int result = await onCheckin(
+                                                    context,
+                                                    widget
+                                                        .tickets[0]
+                                                        .bookingClientModel
+                                                        .bookingId!
+                                                        .toString());
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Check-in"),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
                                 );
-                              },
-                            );
-                          }
-                        },
-                        label: Text(
-                          'Checkin',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                              textStyle: MobydickAppTheme.buttonBooking),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        width: MediaQuery.of(context).size.width * 0.005),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.27,
-                      child: ElevatedButton.icon(
-                        icon: const Icon(
-                          Icons.edit,
-                          size: 18,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          side: const BorderSide(
-                            width: 1.0,
-                            color: MobydickAppTheme.pallet2,
+                              }
+                            },
+                            label: Text(
+                              'Checkin',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                  textStyle: MobydickAppTheme.buttonBooking),
+                            ),
                           ),
-                          elevation: 3,
-                          backgroundColor:
-                              widget.tickets[0].paymentState == "none"
-                                  ? MobydickAppTheme.white
-                                  : MobydickAppTheme
-                                      .dismissibleBackground, // background
-                          foregroundColor:
-                              MobydickAppTheme.pallet2, // foreground
                         ),
-                        onPressed: () {
-                          if (widget.tickets[0].paymentState == "none") {
-                            Navigator.pushNamed(context, 'createBooking',
-                                arguments: {
-                                  "tripId": widget.tripID,
-                                  "bookingId": widget
-                                      .tickets[0].bookingClientModel.bookingId
-                                });
-                          }
-                        },
-                        label: Text(
-                          'Editar',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                              textStyle: MobydickAppTheme.buttonBooking),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.04,
+                            width: MediaQuery.of(context).size.width * 0.005),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          width: MediaQuery.of(context).size.width * 0.27,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.edit,
+                              size: 18,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              side: const BorderSide(
+                                width: 1.0,
+                                color: MobydickAppTheme.pallet2,
+                              ),
+                              elevation: 3,
+                              backgroundColor:
+                                  widget.tickets[0].paymentState == "none"
+                                      ? MobydickAppTheme.white
+                                      : MobydickAppTheme
+                                          .dismissibleBackground, // background
+                              foregroundColor:
+                                  MobydickAppTheme.pallet2, // foreground
+                            ),
+                            onPressed: () {
+                              if (widget.tickets[0].paymentState == "none") {
+                                Navigator.pushNamed(context, 'createBooking',
+                                    arguments: {
+                                      "tripId": widget.tripID,
+                                      "bookingId": widget.tickets[0]
+                                          .bookingClientModel.bookingId
+                                    });
+                              }
+                            },
+                            label: Text(
+                              'Editar',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                  textStyle: MobydickAppTheme.buttonBooking),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                )
+                      ],
+                    ))
               ],
             ),
             theme: const ExpandableThemeData(

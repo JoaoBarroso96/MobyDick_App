@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mobydick/globals.dart' as globals;
-import 'package:mobydick/models/ticket_model.dart';
-import 'package:mobydick/models/trip_details_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/booking_create_model.dart';
 
 class UserService {
   Future<bool> login(String username, String password) async {
@@ -18,11 +15,13 @@ class UserService {
           body: jsonEncode({"username": username, "password": password}));
       if (response.statusCode == 200) {
         Map<String, dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
-        print(body["token"]);
         if (!body["error"]) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', body["token"]);
-          await prefs.setString('firstname', body["firstname"]);
+          await prefs.setString('email', body["email"]);
+          await prefs.setString('name', body["firstname"]);
+          globals.email = body["email"];
+          globals.name = body["firstname"];
           return true;
         }
 

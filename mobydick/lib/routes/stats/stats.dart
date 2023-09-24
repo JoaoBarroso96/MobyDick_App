@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mobydick/models/stats_model.dart';
 import 'package:mobydick/routes/stats/stats_source.dart';
 import '../../app_bar/AppBar.dart';
+import '../../drawer_menu/DrawerMenu.dart';
 import '../../mobydick_app_theme.dart';
 import '../../services/stats_service.dart';
 
@@ -84,6 +85,7 @@ class _StatsScreenState extends State<StatsScreen>
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+        drawer: DrawerMenu(),
         appBar: ApplicationToolbar(title: "Stats"),
         backgroundColor: isLightMode == true
             ? MobydickAppTheme.white

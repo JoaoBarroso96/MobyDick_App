@@ -39,18 +39,24 @@ class _TripDetailsWidget extends State<TripDetailsWidget> {
             visible: widget.tripDetails.state == "cancel",
             child: Padding(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height * 0.1),
-                child: Row(children: [
+                    bottom: MediaQuery.of(context).size.height * 0.02),
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Icon(
-                    Icons.access_time,
-                    color: MobydickAppTheme.pallet2,
-                    size: 27.0,
+                    Icons.warning,
+                    color: MobydickAppTheme.capacityColor,
+                    size: 37.0,
                   ),
                   Text(
                     "  Viagem Cancelada",
-                    textAlign: TextAlign.left,
-                    style:
-                        GoogleFonts.lato(textStyle: MobydickAppTheme.subtitle),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 27,
+                      letterSpacing: 0.2,
+                      color: MobydickAppTheme.capacityColor,
+                    )),
                   ),
                 ]))),
         Row(

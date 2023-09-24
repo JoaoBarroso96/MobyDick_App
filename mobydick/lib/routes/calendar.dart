@@ -200,6 +200,38 @@ class _CalendarScreenState extends State<CalendarScreen>
                                               textStyle:
                                                   MobydickAppTheme.subtitle),
                                         ),
+                                        Visibility(
+                                            visible:
+                                                value[index].state == "cancel",
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.01),
+                                              child: Icon(
+                                                Icons.warning,
+                                                color: MobydickAppTheme
+                                                    .capacityColor,
+                                                size: 17.0,
+                                              ),
+                                            )),
+                                        Visibility(
+                                          visible:
+                                              value[index].state == "cancel",
+                                          child: Text(
+                                            " (cancelada)",
+                                            textAlign: TextAlign.left,
+                                            style: GoogleFonts.lato(
+                                                textStyle: TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15,
+                                              letterSpacing: 0.2,
+                                              color: MobydickAppTheme
+                                                  .capacityColor,
+                                            )),
+                                          ),
+                                        ),
                                       ]),
                                   Row(
                                       mainAxisAlignment:

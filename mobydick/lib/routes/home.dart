@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/routes/home/trip_view.dart';
 import 'package:mobydick/services/trips_service.dart';
 import '../app_bar/AppBar.dart';
+import '../drawer_menu/DrawerMenu.dart';
 import '../mobydick_app_theme.dart';
-
 import '../models/trip_model.dart';
 import 'loading/loading.dart';
 
@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+      drawer: DrawerMenu(),
       appBar: ApplicationToolbar(title: "Home"),
       backgroundColor: isLightMode == true
           ? MobydickAppTheme.white

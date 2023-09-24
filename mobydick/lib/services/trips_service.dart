@@ -91,7 +91,7 @@ class TripService {
 
   Future<TripDetails> fetchTripBookings(int idTrip) async {
     final response =
-        await http.get(Uri.parse("${globals.baseUrl}/trip/details/$idTrip"));
+        await http.get(Uri.parse("${globals.baseUrl}/trip/details/$idTrip/"));
     try {
       if (response.statusCode == 200) {
         TripDetails tripDetails =

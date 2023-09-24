@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../mobydick_app_theme.dart';
-import 'package:mobydick/globals.dart' as globals;
 
-class ApplicationToolbar extends StatelessWidget with PreferredSizeWidget {
+class ApplicationToolbar extends StatelessWidget
+    implements PreferredSizeWidget {
   String title = "";
   ApplicationToolbar({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      iconTheme: IconThemeData(
+        color: MobydickAppTheme.pallet1, //change your color here
+      ),
       bottomOpacity: 0.0,
       elevation: 0.0,
       title: Text(

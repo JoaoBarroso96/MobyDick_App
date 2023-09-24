@@ -84,6 +84,7 @@ class _ViewBookingScreen extends State<ViewBookingScreen>
                   BookingWidget(
                     tickets: item,
                     tripID: tripId,
+                    tripCancel: snapshot.data!.state == "cancel",
                     onRefresh: refreshData,
                   ),
               ]),

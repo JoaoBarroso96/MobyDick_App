@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/routes/home.dart';
-import 'package:mobydick/routes/login/login_page.dart';
 import 'package:mobydick/routes/search/search_page.dart';
 import 'package:mobydick/routes/stats/stats.dart';
 import 'package:mobydick/routes/ticket/rq_reader.dart';
 import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
-import '../mobydick_app_theme.dart';
-import '../models/tabIcon_data.dart';
 import 'calendar.dart';
 import 'create_booking.dart';
 import 'package:mobydick/globals.dart' as globals;
@@ -80,11 +76,10 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
                 builder = (BuildContext _) => SearchPage();
                 break;
               case '/4':
-                builder = (BuildContext _) => QRReaderScreen();
+                builder = (BuildContext _) => StatsScreen();
                 break;
               case '/5':
-                builder = (BuildContext _) => StatsScreen();
-                //builder = (BuildContext _) => QRReaderScreen();
+                builder = (BuildContext _) => QRReaderScreen();
                 break;
               case 'stats':
                 builder = (BuildContext _) => StatsScreen();

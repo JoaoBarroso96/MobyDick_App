@@ -3,10 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/routes/mobydick.dart';
 import 'package:mobydick/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sn_progress_dialog/sn_progress_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
-
+import 'package:mobydick/globals.dart' as globals;
 import '../../mobydick_app_theme.dart';
+import 'package:pdf_flutter/pdf_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,6 +18,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _textEditingController = TextEditingController();
+  final Uri _url = Uri.parse(
+      'https://crm.mobydicktours.azornexus.com/static/Ficha_MobyDick-Tours.png');
   UserService userService = UserService();
   @override
   void dispose() {
@@ -37,8 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     bool keyExists = prefs.containsKey('token');
-    print(keyExists);
     if (keyExists) {
+      globals.email = prefs.getString("email")!;
+      globals.name = prefs.getString("name")!;
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MobydickHomeScreen()),
@@ -226,27 +230,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  //
-                  /*Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'You have\'t any account?',
-                        style: TextStyle(
-                          color: Colors.black.withOpacity(0.6),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Sign Up',
-                          style: TextStyle(
-                              color: Colors.purple,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      )
-                    ],
-                  ),*/
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.15),
+                      child: InkWell(
+                          onTap: PDF.network(
+                            'https://google-developer-training.github.io/android-developer-fundamentals-course-concepts/en/android-developer-fundamentals-course-concepts-en.pdf',
+                          ), // Image tapped
+                          splashColor:
+                              Colors.white10, // Splash color over image
+                          child: Image.asset(
+                            'assets/images/footer.png',
+                            width: MediaQuery.of(context).size.width * 0.9,
+                          )),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -254,6 +254,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
   }
 
   Future<bool> onLogin(String username, String password) async {

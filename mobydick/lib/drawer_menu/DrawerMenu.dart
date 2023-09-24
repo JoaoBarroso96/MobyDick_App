@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobydick/routes/login/login_page.dart';
 import '../mobydick_app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobydick/globals.dart' as globals;
 
 class DrawerMenu extends StatelessWidget {
   DrawerMenu({Key? key}) : super(key: key);
@@ -12,17 +13,17 @@ class DrawerMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const UserAccountsDrawerHeader(
-            accountEmail: Text('jane.doe@example.com'),
+          UserAccountsDrawerHeader(
+            accountEmail: Text(globals.email.toString()),
             accountName: Text(
-              'Jane Doe',
+              globals.name.toString(),
               style: TextStyle(fontSize: 24.0),
             ),
             decoration: BoxDecoration(
               color: MobydickAppTheme.pallet2,
             ),
           ),
-          ListTile(
+          /*ListTile(
             leading: const Icon(Icons.info),
             title: const Text(
               'About',
@@ -31,7 +32,7 @@ class DrawerMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushNamed(context, 'stats');
             },
-          ),
+          ),*/
           const Divider(
             height: 10,
             thickness: 1,
@@ -58,5 +59,9 @@ class DrawerMenu extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
         (Route<dynamic> route) => false);
+  }
+
+  Future<void> getInfo(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
   }
 }

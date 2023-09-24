@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/models/ticket_model.dart';
 import 'package:mobydick/services/ticket_service.dart';
 import '../../app_bar/AppBar.dart';
+import '../../drawer_menu/DrawerMenu.dart';
 import '../../mobydick_app_theme.dart';
 
 class SearchPage extends StatefulWidget {
@@ -33,6 +34,7 @@ class _SearchPage extends State<SearchPage> {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
+        drawer: DrawerMenu(),
         appBar: ApplicationToolbar(title: "Pesquisa"),
         backgroundColor: isLightMode == true
             ? MobydickAppTheme.white
@@ -66,8 +68,9 @@ class _SearchPage extends State<SearchPage> {
                       fillColor: MobydickAppTheme.pallet1,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                       border: OutlineInputBorder(),
-                      hintText: "Pesquisar por nome, email ou contacto",
-                      labelText: "nome, email ou contacto",
+                      hintText:
+                          "Pesquisar por nome, email, contacto ou referência",
+                      labelText: "nome, email, contacto ou referência",
                     ),
                   ),
                 ),
