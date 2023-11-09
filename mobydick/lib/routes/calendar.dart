@@ -44,7 +44,7 @@ class _CalendarScreenState extends State<CalendarScreen>
 
     setState(() {
       tripService
-          .fetchTripsInInterval("2023-01-27", "2023-07-27")
+          .fetchTripsInInterval("2023-06-27", "2023-12-27")
           .then((value) => setState(() {
                 tripsByDay = value;
                 pageReady = true;

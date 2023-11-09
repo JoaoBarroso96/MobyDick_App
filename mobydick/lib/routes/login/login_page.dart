@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
 import 'package:mobydick/globals.dart' as globals;
 import '../../mobydick_app_theme.dart';
-import 'package:pdf_flutter/pdf_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -230,23 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.15),
-                      child: InkWell(
-                          onTap: PDF.network(
-                            'https://google-developer-training.github.io/android-developer-fundamentals-course-concepts/en/android-developer-fundamentals-course-concepts-en.pdf',
-                          ), // Image tapped
-                          splashColor:
-                              Colors.white10, // Splash color over image
-                          child: Image.asset(
-                            'assets/images/footer.png',
-                            width: MediaQuery.of(context).size.width * 0.9,
-                          )),
-                    ),
-                  ),
+                  
                 ],
               ),
             ),
