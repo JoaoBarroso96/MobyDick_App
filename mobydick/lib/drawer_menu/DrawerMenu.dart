@@ -55,10 +55,9 @@ class DrawerMenu extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.pushAndRemoveUntil(
+    Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (Route<dynamic> route) => false);
+        MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
   Future<void> getInfo(BuildContext context) async {

@@ -32,9 +32,9 @@ class _StatsScreenState extends State<StatsScreen>
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     setState(() {
-      futureStats = statsService.getStats("2023-05-01", "2023-09-01");
-      _dateStartController.text = "2023-05-01";
-      _dateEndController.text = "2023-09-01";
+      futureStats = statsService.getStats("${selectedDate.year}-01-01", "${selectedDate.year}-12-31");
+      _dateStartController.text = "${selectedDate.year}-01-01";
+      _dateEndController.text = "${selectedDate.year}-12-31";
     });
 
     super.initState();
@@ -49,7 +49,7 @@ class _StatsScreenState extends State<StatsScreen>
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2023, 1),
+        firstDate: DateTime(selectedDate.year, 1),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {
@@ -64,7 +64,7 @@ class _StatsScreenState extends State<StatsScreen>
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2023, 1),
+        firstDate: DateTime(selectedDate.year, 1),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {

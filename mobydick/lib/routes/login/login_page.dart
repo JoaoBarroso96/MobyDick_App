@@ -58,6 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Text(""),
+      
       body: Container(
         decoration: const BoxDecoration(
             // color: Colors.red.withOpacity(0.1),

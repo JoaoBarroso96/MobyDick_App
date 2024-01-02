@@ -29,6 +29,7 @@ class _CalendarScreenState extends State<CalendarScreen>
 
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
+
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date
   DateTime _focusedDay = DateTime.now();
@@ -44,7 +45,7 @@ class _CalendarScreenState extends State<CalendarScreen>
 
     setState(() {
       tripService
-          .fetchTripsInInterval("2023-06-27", "2023-12-27")
+          .fetchTripsInInterval("${_focusedDay.year}-01-01", "${_focusedDay.year}-12-31")
           .then((value) => setState(() {
                 tripsByDay = value;
                 pageReady = true;
@@ -104,8 +105,8 @@ class _CalendarScreenState extends State<CalendarScreen>
               child: Column(/*scrollDirection: Axis.vertical, */ children: [
                 TableCalendar<Event>(
                   locale: "pt_Pt",
-                  firstDay: DateTime.utc(2023, 1, 1),
-                  lastDay: DateTime.utc(2023, 12, 31),
+                  firstDay: DateTime.utc(_focusedDay.year, 1, 1),
+                  lastDay: DateTime.utc(_focusedDay.year, 12, 31),
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   rangeStartDay: _rangeStart,
