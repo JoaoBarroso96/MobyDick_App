@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobydick/models/ticket_model.dart';
+import 'package:mobydick/routes/search/utils/year_dropdown.dart';
 import 'package:mobydick/services/ticket_service.dart';
 import '../../app_bar/AppBar.dart';
 import '../../drawer_menu/DrawerMenu.dart';
@@ -23,6 +24,7 @@ class _SearchPage extends State<SearchPage> {
   TextEditingController _searchController = TextEditingController();
   String searchterm = "";
   bool search = false;
+  String selectedYear = "All";
   List<Ticket> tickets = [];
   @override
   void initState() {
@@ -44,37 +46,57 @@ class _SearchPage extends State<SearchPage> {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Form(
-                key: formKey,
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 12, right: 12, bottom: 12, top: 12),
-                  decoration: BoxDecoration(
-                    color: MobydickAppTheme.white,
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.only(
+                              left: 12, right: 12, bottom: 12, top: 12),
+                          decoration: BoxDecoration(
+                            color: MobydickAppTheme.white,
+                            borderRadius: BorderRadius.all(Radius.circular(3)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _searchController,
+                                onChanged: (value) => searchterm = value,
+                                onSaved: (value) => searchterm = value!,
+                                decoration: InputDecoration(
+                                  fillColor: MobydickAppTheme.pallet1,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 12),
+                                  border: OutlineInputBorder(),
+                                  hintText:
+                                      "Pesquisar por nome, email, contacto ou referência",
+                                  labelText:
+                                      "nome, email, contacto ou referência",
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.01,
+                              ),
+                              YearDropdown(
+                                selectedYear: selectedYear,
+                                onYearChanged: (String newYear) {
+                                  setState(() {
+                                    selectedYear = newYear;
+                                  });
+                                },
+                              ),
+                            ],
+                          )),
                     ],
-                  ),
-                  child: TextFormField(
-                    controller: _searchController,
-                    onChanged: (value) => searchterm = value,
-                    onSaved: (value) => searchterm = value!,
-                    decoration: InputDecoration(
-                      fillColor: MobydickAppTheme.pallet1,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      border: OutlineInputBorder(),
-                      hintText:
-                          "Pesquisar por nome, email, contacto ou referência",
-                      labelText: "nome, email, contacto ou referência",
-                    ),
-                  ),
-                ),
-              ),
+                  )),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(
@@ -208,7 +230,7 @@ class _SearchPage extends State<SearchPage> {
   }
 
   Future<int> onSearch() async {
-    List<Ticket> temp = await ticketService.searchTickets(searchterm);
+    List<Ticket> temp = await ticketService.searchTickets(searchterm, selectedYear);
     setState(() {
       search = true;
       tickets = temp;

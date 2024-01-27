@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isEmailCorrect = false;
+  bool isPasswordIncorrect = false;
   final _formKey = GlobalKey<FormState>();
   bool apiCall = false;
   String email = "";
@@ -59,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Text(""),
-      
       body: Container(
         decoration: const BoxDecoration(
             // color: Colors.red.withOpacity(0.1),
@@ -193,6 +193,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(
+                          height: 10,
+                        ),
+                        Visibility(
+                          visible: isPasswordIncorrect,
+                          child: Text(
+                            'Incorrect password',
+                            style: GoogleFonts.abhayaLibre(
+                              textStyle: TextStyle(
+                                  color: Colors.red.withOpacity(0.8),
+                                  fontWeight: FontWeight.w900,
+                                  // height: 1.5,
+                                  fontSize: 17),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
                           height: 20,
                         ),
                         isEmailCorrect
@@ -212,7 +228,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: () async {
                                   setState(() {
                                     apiCall = true; // Set state like this
+                                    isPasswordIncorrect = false;
                                   });
+
                                   bool success = await onLogin(email, password);
                                   if (success) {
                                     Navigator.pushAndRemoveUntil(
@@ -221,6 +239,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             builder: (context) =>
                                                 MobydickHomeScreen()),
                                         (Route<dynamic> route) => false);
+                                  } else {
+                                    setState(() {
+                                      isPasswordIncorrect =
+                                          true; // Set state like this
+                                    });
                                   }
                                 },
                                 child: Text(
@@ -231,7 +254,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  
                 ],
               ),
             ),

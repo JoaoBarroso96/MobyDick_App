@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobydick/drawer_menu/DrawerMenu.dart';
 import 'package:mobydick/routes/home.dart';
+import 'package:mobydick/routes/login/login_page.dart';
 import 'package:mobydick/routes/search/search_page.dart';
 import 'package:mobydick/routes/stats/stats.dart';
 import 'package:mobydick/routes/ticket/rq_reader.dart';
 import 'package:mobydick/routes/ticket/ticket_detail.dart';
 import 'package:mobydick/routes/view_booking.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../bottom_navigation_view/bottom_bar_view.dart';
 import 'calendar.dart';
 import 'create_booking.dart';
@@ -64,7 +66,6 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
           key: _navigatorKey,
           onGenerateRoute: (RouteSettings settings) {
             WidgetBuilder builder;
-            print(settings.name);
             switch (settings.name) {
               case '/1':
                 builder = (BuildContext _) => HomeScreen();
@@ -81,6 +82,10 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
               case '/5':
                 builder = (BuildContext _) => QRReaderScreen();
                 break;
+              case 'logout':
+                _logout(context);
+                builder = (BuildContext _) => LoginScreen();
+                return MaterialPageRoute(builder: builder, settings: settings);
               case 'stats':
                 builder = (BuildContext _) => StatsScreen();
                 break;
@@ -110,6 +115,14 @@ class _MobydickHomeScreenState extends State<MobydickHomeScreen>
             return MaterialPageRoute(builder: builder, settings: settings);
           },
         ));
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
   Future<bool> getData() async {

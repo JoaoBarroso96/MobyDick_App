@@ -6,7 +6,7 @@ import 'package:mobydick/globals.dart' as globals;
 import 'package:mobydick/models/ticket_model.dart';
 
 class TicketService {
-  Future<List<Ticket>> searchTickets(String searchTerm) async {
+  Future<List<Ticket>> searchTickets(String searchTerm, String selectedYear) async {
     try {
       final response = await http.get(
         Uri.parse("${globals.baseUrl}/search/$searchTerm"),

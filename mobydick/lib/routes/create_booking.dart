@@ -117,7 +117,7 @@ class _CreateBookingScreen extends State<CreateBookingScreen>
                         style: ElevatedButton.styleFrom(
                           elevation: 10,
                           backgroundColor:
-                              MobydickAppTheme.nearlyBlue, // background
+                              MobydickAppTheme.pallet2, // background
                           foregroundColor: Colors.white, // foreground
                         ),
                         onPressed: () async {
