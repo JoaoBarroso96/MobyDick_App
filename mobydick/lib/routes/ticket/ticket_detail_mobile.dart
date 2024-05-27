@@ -54,7 +54,7 @@ class _TicketDetailMobilePage extends State<TicketDetailMobilePage> {
                   // Vertically center the widget inside the column
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    QrImage(
+                    QrImageView(
                       data: widget.ticket.ref,
                       version: QrVersions.auto,
                       size: MediaQuery.of(context).size.width * 0.45,
