@@ -53,10 +53,10 @@ dependencies:
   shared_preferences: ^2.1.0
   qr_code_scanner: ^1.0.1
   fl_chart: ^0.62.0
-  flutter_gif: ^0.0.4
   flutter_spinkit: ^5.2.0
   url_launcher: ^6.1.11
   flutter_launcher_icons: "^0.13.1"
+  gif: ^2.2.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
